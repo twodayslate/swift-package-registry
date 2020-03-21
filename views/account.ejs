@@ -1,0 +1,89 @@
+<p>ID: <%= user.id %></p>
+<p>Username: <%= user.username %></p>
+<p>Name: <a href="<%= user.profileUrl %>"><%= user.displayName %></a></p>
+
+<% if (user.emails) { %>
+<p>Email: <%= user.emails[0].value %></p>
+<% } %>
+
+<% if (user.photos) { %>
+<p>Avatar: <img src="<%= user.photos[0].value %>" width="64px" /></p>
+<% } %>
+
+<% if (repos.length > 0) { %>
+	<h3>Your Public Swift Repositories</h3>
+	<table class="table table-striped table-hover">
+	<thead class="thead-dark">
+		<tr>
+			<th scope="col">Repository</th>
+			<th scope="col">Description</th>
+			<th></th>
+		</tr>
+		</thead>
+		<tbody>
+	  <% repos.forEach(function(repo){ %>
+		<% if (repo.language === "Swift" && repo.owner.login === user.username) { %>
+		<tr>
+			<td><a href="<%= repo.html_url %>"><%= repo.name %></a></td>
+
+			<td><%= repo.description %></td>
+
+			<td>
+				<form action="/add" method="post" class="form-inline">
+				<input name="url" id="url" type="hidden" value="<%= repo.html_url %>" />
+				<button type="submit" class="btn btn-primary">Add</button>
+				</form>
+			</td>
+
+		<!-- <td><pre><%= JSON.stringify(repo) %></pre></td> -->
+		</tr>
+		<% } %>
+	  <% }); %>
+	  </tbody>
+	</table>
+	<% if (user._json.public_repos > pageSize)  { %>
+		<nav aria-label="Page navigation example">
+		  	<ul class="pagination justify-content-center">
+		  		<% if(page <= 1) { %>
+		    	<li class="page-item disabled">
+		    	<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a
+		    	</li>
+		    	<% } else { %>
+		    	<li class="page-item">
+		    	<a class="page-link" href="?page=<%= page-1 %>" tabindex="-1" aria-disabled="false">Previous</a>
+		    	</li>
+		    	<li class="page-item"><a class="page-link" href="?page=<%= page-1 %>"><%= page-1 %></a></li>
+		    	<% } %> 	
+		    	<li class="page-item active" aria-current="page"><a class="page-link" href="?page=<%= page %>"><%= page %></a></li>
+
+		    	<% if (page*pageSize > user._json.public_repos) { %>
+			    	<li class="page-item disabled">
+			      	<a class="page-link" href="?page=<%= nextPage %>" aria-disabled="true">Next</a>
+			    	</li>
+		    	<% } else { %>
+		    		<li class="page-item"><a class="page-link" href="?page=<%= nextPage %>"><%= nextPage %></a></li>
+			    	<li class="page-item">
+			      	<a class="page-link" href="?page=<%= nextPage %>">Next</a>
+			    	</li>
+		    	<% } %>
+		    	
+		  	</ul>
+		</nav>
+	<% } %>
+<% } else { %>
+	<h3>You don't have any repositories</h3>
+<% } %>
+
+<span>
+	Missing a repository? Only public repositories you own with the Language as Swift are listed. Contact <a href="https://zac.gorak.us">@twodayslate</a> if you think there is an error or manually add the repository below.
+</span>
+
+<form action="/add" method="post" class="form form-inline d-inline w-100">
+	<div class="input-group">
+    <input class="form-control form-control-lg" type="url" placeholder="https://github.com/%s/%s" id="url" name="url">
+    <span class="input-group-append">
+    	<button type="submit" class="btn btn-primary">Add</button>
+    	</span>
+    </input>
+    </div>
+</form>
