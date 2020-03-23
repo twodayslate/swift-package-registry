@@ -185,7 +185,29 @@ app.get('/:user/:repo', function(req, res) {
 });
 
 app.get('/about', function(req, res) {
-  res.render('about', {user: req.user, title: "About"})
+  fs.readFile('README.md', 'utf-8', function(err, contents) {
+    if(err) {
+      res.render('about', {user: req.user, title: "About", readme: err})
+      return;
+    }
+    var url = new URL("https://github.com/twodayslate/swift-package-registry/")
+    url.hostname = "raw.githubusercontent.com"
+    url.pathname = url.pathname + "/master";
+    var marked = require('marked');
+    marked.setOptions({
+        baseUrl: url.toString(),
+        renderer: new marked.Renderer(),
+        highlight: function(code, language) {
+            const hljs = require('highlight.js');
+            const validLanguage = hljs.getLanguage(language) ? language : 'plaintext';
+            return hljs.highlight(validLanguage, code).value;
+          },
+          gfm: true,
+          breaks: false,
+    });
+
+    res.render('about', {user: req.user, title: "About", readme: marked(contents)})
+  })
 });
 
 const { Op } = require("sequelize");
