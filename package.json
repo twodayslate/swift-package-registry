@@ -1,6 +1,6 @@
 {
- "name": "my_package",
- "description": "",
+ "name": "swift_package_registry",
+ "description": "Swift Package Registry",
  "version": "1.0.0",
  "main": "app.js",
  "scripts": {
@@ -10,6 +10,10 @@
  "author": "",
  "license": "ISC",
  "homepage": "https://swiftpackageregistry.com",
+ "repository": {
+  "type": "git",
+  "url": "https://github.com/twodayslate/swift-package-registry.git"
+ },
  "dependencies": {
   "@primer/octicons": "^9.6.0",
   "axios": "^0.19.2",
