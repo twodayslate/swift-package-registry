@@ -450,7 +450,7 @@ app.post('/add', ensureAuthenticated, function(req, res) {
                     return hljs.highlight(validLanguage, code).value;
                   },
                   gfm: true,
-                  breaks: true,
+                  breaks: false,
             });
 
             package.name = repo_info.name
