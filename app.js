@@ -107,6 +107,10 @@ app.get('/', function(req, res){
   })
 });
 
+app.get('/add', function(req, res) {
+  res.render('add', {user: req.user, title:"Add Package"})
+})
+
 app.get('/all', function(req, res) {
   models.Package.findAll({
     where: {
@@ -114,7 +118,7 @@ app.get('/all', function(req, res) {
     },
     order: [[models.sequelize.col('full_name'), 'ASC'], [models.sequelize.col('name'), 'DESC']]
   }).then(function(packages) {
-      res.render('packages', {user: req.user, packages: packages})
+      res.render('packages', {user: req.user, packages: packages, title: "All Packages"})
   })
 });
 
@@ -127,12 +131,12 @@ app.get('/account', ensureAuthenticated, function(req, res){
   per_page: pageSize
 }, function(err, repos, h) {
   let nextPage = currentPage + 1;
-		res.render('account', { user: req.user, repos: repos, me: me, page:currentPage, pageSize:pageSize, nextPage:nextPage });
+		res.render('account', { user: req.user, repos: repos, me: me, page:currentPage, pageSize:pageSize, nextPage:nextPage, title: "Account"});
 	});
 });
 
 app.get('/login', function(req, res){
-	res.render('login', {user: req.user} );
+	res.render('login', {user: req.user, title: "Login"} );
 });
 
 // GET /auth/github
@@ -170,7 +174,7 @@ app.get('/:user/:repo', function(req, res) {
     }
   }).then(function(package) {
     if (package) {
-      res.render('repo', {user: req.user, package: package})
+      res.render('repo', {user: req.user, package: package, title: package.name || package.full_name})
     } else {
       res.render('404', {user: req.user, req: req} )
     }
@@ -180,11 +184,15 @@ app.get('/:user/:repo', function(req, res) {
   });
 });
 
+app.get('/about', function(req, res) {
+  res.render('about', {user: req.user, title: "About"})
+});
+
 const { Op } = require("sequelize");
 app.get("/search", function(req, res) {
   console.log(req.query.term)
-
-  let wildcard = '%' + (req.query.term || "") + "%"
+  let term = req.query.term || "";
+  let wildcard = '%' + term + "%"
 
   console.log(wildcard)
 
@@ -201,7 +209,7 @@ app.get("/search", function(req, res) {
     },
     order: [[models.sequelize.col('github_stars'), 'DESC'], [models.sequelize.col('name'), 'DESC']]
   }).then(function(packages) {
-      res.render('search', {user: req.user, packages: packages, term: req.query.term || ""})
+      res.render('search', {user: req.user, packages: packages, term: term, title: term + " Search"})
   })
 });
 
@@ -424,7 +432,11 @@ app.post('/add', ensureAuthenticated, function(req, res) {
               return;
           }
 
+          package.github_repo_raw = repo_info.toString()
+
           if(repo_info) {
+            package.github_repo_info_raw = repo_info.toString()
+
             var url = new URL(repo_info.html_url)
             url.hostname = "raw.githubusercontent.com"
             url.pathname = url.pathname + "/" + release_tag;
@@ -472,6 +484,7 @@ app.post('/add', ensureAuthenticated, function(req, res) {
           package.github_release_tag = release_tag;
 
           if(repo_release) {
+            package.github_release_raw = repo_release.toString()
             package.github_release_name = repo_release.name;
             package.github_release_body = marked(repo_release.body);
           }

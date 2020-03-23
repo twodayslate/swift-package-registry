@@ -10,6 +10,9 @@ module.exports = (sequelize, DataTypes) => {
     readme_raw: DataTypes.TEXT,
     readme_html: DataTypes.TEXT,
 
+    github_repo_raw: DataTypes.TEXT,
+    github_repo_info_raw: DataTypes.TEXT,
+    
     github_id: DataTypes.BIGINT,
     github_default_branch: DataTypes.STRING,
     
@@ -17,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     github_html_url: DataTypes.STRING,
     github_clone_url: DataTypes.STRING,
 
+    github_release_raw: DataTypes.TEXT, 
     github_release: DataTypes.STRING,
     github_release_tag: DataTypes.STRING,
     github_release_name: DataTypes.STRING,

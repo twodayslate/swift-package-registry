@@ -1,52 +1,68 @@
-<% if (package.processing) { %>
-	Package is still processing
-	<%= JSON.stringify(package) %>
-	<img src="/images/loading.gif" />
-<% } else { %>
-	<% if (package.processing_error) { %>
-		<h2>Error processing</h2>
-		<pre><%= package.processing_error %></pre>
+<div class="container repo">
+	<% if (package.processing) { %>
+		Package is still processing
+		<%= JSON.stringify(package) %>
+		<img src="/images/loading.gif" />
 	<% } else { %>
-		<div class="jumbotron">
-			<div class="containe">
-				<h2 class="d-inline"><%= package.name %></h2>
-				<h3 class="d-inline text-muted"><%= package.github_release_tag %></h3>
+		<% if (package.processing_error) { %>
+			<h2>Error processing</h2>
+			<pre><%= package.processing_error %></pre>
+		<% } else { %>
+			<div class="jumbotron">
+				<div class="containe">
+					<h2 class="d-inline"><%= package.name %></h2>
+					<h3 class="d-inline text-muted"><%= package.github_release_tag %></h3>
+				</div>
+				<a class="btn btn-block btn-social btn-github w-50" href="<%=package.github_html_url %>">
+	    			<span class="fa fa-github"></span> <%= package.full_name %>
+	 			</a>
+
+	 			<% if (package.github_release_tag) { %>
+	 			<div class="card my-md-3">
+	 				<div class="card-body">
+						<pre class="my-md-0">.Package(url: "<%= package.github_clone_url %>", from: "<%= package.github_release_tag.replace("v", "") %>")</pre>
+					</div>
+				</div>
+				<% } %>
+				<div class="card my-md-3">
+	 				<div class="card-body">
+	 					<pre class="my-md-0">.Package(url: "<%= package.github_clone_url %>", branch: "<%= package.github_default_branch %>")</pre>
+	 				</div>
+	 			</div>
+				
 			</div>
-			<a class="btn btn-block btn-social btn-github w-50" href="<%=package.github_html_url %>">
-    			<span class="fa fa-github"></span> <%= package.full_name %>
- 			</a>
 
- 			<pre>.Package(url: "<%= package.github_clone_url %>", branch: "<%= package.github_default_branch %>")</pre>
-			<% if (package.github_release_tag) { %>
-			<pre>.Package(url: "<%= package.github_clone_url %>", from: "<%= package.github_release_tag.replace("v", "") %>")</pre>
-			<% } %>
-		</div>
-
-		<div class="row">
-
-		<div class="col-8">
-			<div class="readme">
-				<%- package.readme_html %>
-			</div>
-		</div>
-
-		<div class="col-4">
-			<h3>Description</h3>
-			<h4>Swift Tools <%= package.swift_tool_version %></h4>
-			<pre><%= package.swift_describe_raw %></pre>
-			<h3>Dependencies</h3>
-			<h4>Swift Tools <%= package.swift_tool_version %></h4>
-			<pre><%= package.swift_dependencies_raw %></pre>
-
+			
 			<% if(package.github_release_name && package.github_release_body) { %>
-				<div class="whatsnew">
-					<h3>What's New</h3>
-					<h3><%= package.github_release_name %></h3>
-					<div>
-						<%- package.github_release_body %>
+				<div class="card my-md-3">
+					<h3 class="card-header">What's New</h3>
+					<div class="card-body whatsnew">
+						<h3 class="card-title"><%= package.github_release_name %></h3>
+						<div class="card-text">
+							<%- package.github_release_body %>
+						</div>
 					</div>
 				</div>
 			<% } %>
-		</div>
+
+			<div class="row">
+
+			<div class="col-8">
+				<div class="readme">
+					<%- package.readme_html %>
+				</div>
+			</div>
+
+			<div class="col-4">
+				<h3>Description</h3>
+				<h4>Swift Tools <%= package.swift_tool_version %></h4>
+				<pre class="pre-scrollable"><%= package.swift_describe_raw %></pre>
+				<h3>Dependencies</h3>
+				<h4>Swift Tools <%= package.swift_tool_version %></h4>
+				<pre class="pre-scrollable"><%= package.swift_dependencies_raw %></pre>
+
+				
+			</div>
+		<% } %>
 	<% } %>
-<% } %>
+</div>

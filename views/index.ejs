@@ -1,4 +1,6 @@
-<form class="form d-inline w-100" action="/search" method="GET">
+<div class="container" id="index">
+
+<form class="form my-md-3" action="/search" method="GET">
 	<div class="input-group">
     <input class="form-control form-control-lg" type="text" placeholder="Search Swift Package Registry" id="term" name="term">
     <span class="input-group-append">
@@ -27,7 +29,9 @@
 		</tr>
 	  <% }); %>
 	  </tbody>
+	  <caption><a href="/all">View all packages</a></caption>
 	</table>
+	
 </div>
 <div class="col-4">
 	<h2>New Swift Packages</h2>
@@ -42,3 +46,4 @@
 	</ul>
 	</div>
 	</div>
+</div>

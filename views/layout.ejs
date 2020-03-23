@@ -18,15 +18,18 @@
 
     </head>
     <body>
-        <div class="container">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
-                <a class="navbar-brand" href="/">Swift Package Registry</a>
+        <div class="container my-md-2">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light rounded my-md-3">
+                <a class="navbar-brand" href="/">
+                <img src="/images/Swift_logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+                Swift Package Registry</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+                        <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
+                        <li class="nav-item"><a href="/add" class="nav-link">Add Package</a></li>
                     </ul>
                     <ul class="navbar-nav">
                         <% if (!user) { %>
@@ -41,6 +44,27 @@
             <main role="main">
                 <%- body %>
             </main>
+
+            <footer class="pt-4 my-md-3 pt-md-5 border-top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <img src="/images/Swift_logo.png" width="24" height="24" class="mb-2" alt="">
+                            <small class="d-block mb-3 text-muted">Copyright &copy; 2020 All rights reserved.</small>
+                            <small class="d-block mb-3 text-muted">Swift and the Swift logo are trademarks of Apple Inc.</small>
+                        </div>
+                        <div class="col">
+                            <h5><a href="/about">About</a></h5>
+                            <ul class="list-unstyled text-small">
+                                <li><a href="https://github.com/twodayslate/swift-package-registry/">GitHub</a></li>
+                                <li><a href="https://twitter.com/twodayslate">Twitter</a></li>
+                                <li><a href="https://zac.gorak.us">zac.gorak.us</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </footer>
         </div>
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
