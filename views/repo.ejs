@@ -1,8 +1,7 @@
 <div class="container repo">
 	<% if (package.processing) { %>
-		Package is still processing
-		<%= JSON.stringify(package) %>
-		<img src="/images/loading.gif" />
+		<img src="/images/loading.gif" class="mx-auto" />
+		<p>Package is still processing</p>
 	<% } else { %>
 		<% if (package.processing_error) { %>
 			<h2>Error processing</h2>
