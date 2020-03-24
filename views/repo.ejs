@@ -6,6 +6,20 @@
 			</div>
 			<p>Package is still processing</p>
 		</div>
+
+		<script type="text/javascript">
+
+		    function autoRefreshPage()
+
+		    {
+
+		        window.location = window.location.href;
+
+		    }
+
+		    setInterval('autoRefreshPage()', 10000);
+
+		</script>
 	<% } else { %>
 		<% if (package.processing_error) { %>
 			<h2>Error processing</h2>
