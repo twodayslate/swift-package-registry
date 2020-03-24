@@ -13,7 +13,7 @@
 
 	<% if (repos.length > 0) { %>
 		<h3>Your Public Swift Repositories</h3>
-		<table class="table table-striped table-hover">
+		<table class="table table-responsive table-striped table-hover">
 		<thead class="thead-dark">
 			<tr>
 				<th scope="col">Repository</th>
@@ -76,7 +76,7 @@
 	<% } %>
 
 	<p class="text-muted">
-		Missing a repository? Only public repositories you own with the Language as Swift are listed. Contact <a href="https://zac.gorak.us">@twodayslate</a> if you think there is an error. You can also manually add a repository below.
+		Missing a repository? Only public repositories you own with the Language as Swift are listed. Contact <a href="https://zac.gorak.us">@twodayslate</a> if you think there is an error. You can also manually add a public repository below.
 	</p>
 
 	<form action="/add" method="post" class="form">

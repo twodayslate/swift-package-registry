@@ -1,13 +1,17 @@
 <div class="container repo">
 	<% if (package.processing) { %>
-		<img src="/images/loading.gif" class="mx-auto" />
-		<p>Package is still processing</p>
+		<div class="text-center">
+			<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+	  			<span class="sr-only">Loading...</span>
+			</div>
+			<p>Package is still processing</p>
+		</div>
 	<% } else { %>
 		<% if (package.processing_error) { %>
 			<h2>Error processing</h2>
 			<pre><%= package.processing_error %></pre>
 		<% } else { %>
-			<div class="jumbotron">
+			<div class="jumbotron py-3">
 				<div class="containe">
 					<h2 class="d-inline"><%= package.name %></h2>
 					<h3 class="d-inline text-muted"><%= package.github_release_tag %></h3>
@@ -19,7 +23,7 @@
 	 			<% if (package.github_release_tag && package.github_release_tag != package.github_default_branch) { %>
 	 			<div class="card my-md-3">
 	 				<div class="card-body">
-						<pre class="my-md-0">.Package(url: "<%= package.github_clone_url %>", from: "<%= package.github_release_tag.replace("v", "") %>")</pre>
+						<pre class="my-md-0">.Package(url: "<%= package.github_clone_url %>", .upToNextMajor(from: "<%= package.github_release_tag.replace("v", "") %>"))</pre>
 					</div>
 				</div>
 				<% } %>
@@ -54,12 +58,69 @@
 
 			<div class="col-sm-4">
 				<h3>Description</h3>
-				<h4>Swift Tools <%= package.swift_tool_version %></h4>
-				<pre class="pre-scrollable"><%= package.swift_describe_raw %></pre>
-				<h3>Dependencies</h3>
-				<h4>Swift Tools <%= package.swift_tool_version %></h4>
-				<pre class="pre-scrollable"><%= package.swift_dependencies_raw %></pre>
 
+				<ul class="list-group list-group-flush">
+					<li class="list-group-item">Swift Tools <%= package.swift_tool_version %></li>
+				</ul>
+
+				<button type="button" class="btn btn-link" data-toggle="modal" data-target=".bd-description-modal">View Raw Output</button>
+
+				<div class="modal fade bd-description-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+				  <div class="modal-dialog modal-xl" role="document">
+
+				    <div class="modal-content">
+				    	<div class="modal-header">
+					    	<h5 class="modal-title">Description</h5>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          <span aria-hidden="true">&times;</span>
+					        </button>
+					       </div>
+				    	<div class="modal-body">
+				      		<pre><%= package.swift_describe_raw %></pre>
+				      	</div>
+				    </div>
+				  </div>
+				</div>
+
+				<h3>Dependencies</h3>
+
+				<% let deps = JSON.parse(package.swift_dependencies_raw.substr(package.swift_dependencies_raw.indexOf('{'))); %>
+				<ul class="list-group list-group-flush">
+				<% if (deps.dependencies.length > 0) { %>
+					
+					<% deps.dependencies.forEach(function(dep) { %>
+						<% let depurl = new URL(dep.url); %>
+						<% if (depurl.hostname == "github.com") { %>
+							<% let deppath = depurl.pathname.replace('.git', ''); %>
+							<li class="list-group-item d-flex justify-content-between align-items-center"><a href="<%= deppath %>"><%= dep.name %></a><span class="badge badge-secondary badge-pill"><%= dep.version %></span></li>
+						<% } else { %>
+							<li class="list-group-item d-flex justify-content-between align-items-center"><%= dep.name %><span class="badge badge-secondary badge-pill"><%= dep.version %></span></li>
+						<% } %>
+					<% }) %>
+				<% } else { %>
+					<li class="list-group-item">None</li>
+				<% } %>
+				</ul>
+
+
+				<button type="button" class="btn btn-link" data-toggle="modal" data-target=".bd-example-modal-sm">View Raw Output</button>
+
+				<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+				  <div class="modal-dialog modal-xl" role="document">
+
+				    <div class="modal-content">
+				    	<div class="modal-header">
+					    	<h5 class="modal-title">Dependencies</h5>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          <span aria-hidden="true">&times;</span>
+					        </button>
+					       </div>
+				    	<div class="modal-body">
+				      		<pre><%= package.swift_dependencies_raw %></pre>
+				      	</div>
+				    </div>
+				  </div>
+				</div>
 				
 			</div>
 		<% } %>
