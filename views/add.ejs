@@ -1,5 +1,14 @@
 <div class="container" id="add">
 	<h2>Add a package</h2>
+
+	<% if (flash && flash.error) { %>
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  			<%= flash.error %>
+  			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    			<span aria-hidden="true">&times;</span>
+  			</button>
+		</div>
+	<% } %>
 	<form action="/add" method="post" class="form">
 		<div class="input-group">
 	    <input class="form-control form-control-lg" type="url" placeholder="https://github.com/%s/%s" id="url" name="url">

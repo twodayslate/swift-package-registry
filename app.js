@@ -84,6 +84,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(__dirname + '/public'));
 
+// https://stackoverflow.com/a/15773824/193772
+app.use(function(req, res, next) {
+    if (req.path.substr(-1) == '/' && req.path.length > 1) {
+        var query = req.url.slice(req.path.length);
+        res.redirect(301, req.path.slice(0, -1) + query);
+    } else {
+        next();
+    }
+});
 
 app.get('/', function(req, res){
   models.Package.findAll({
@@ -108,7 +117,7 @@ app.get('/', function(req, res){
 });
 
 app.get('/add', function(req, res) {
-  res.render('add', {user: req.user, title:"Add Package"})
+  res.render('add', {user: req.user, title:"Add Package", flash: req.flash()})
 })
 
 app.get('/all', function(req, res) {
@@ -421,10 +430,25 @@ function parsePackage(ghrepo, swift_version, callback) {
     });
 }
 
+
 app.post('/add', ensureAuthenticated, function(req, res) {
-  const parsedUrl = new URL(req.body.url);
+  var parsedUrl;
+  try {
+    parsedUrl = new URL(req.body.url);
+  } catch(err) {
+    req.flash('error', 'Invalid GitHub URL')
+    res.redirect('add')
+    return
+  }
+  
   if(parsedUrl.hostname == "github.com") {
-    let full_name = parsedUrl.pathname.substr(1);
+    let full_name = parsedUrl.pathname.replace(".git","").replace(/^\/|\/$/g, ''); // https://stackoverflow.com/a/3840645/193772
+    if (full_name.split("/").length != 2) {
+      req.flash('error', 'Invalid GitHub URL')
+      res.redirect('add')
+      return
+    }
+
     models.Package.findOrCreate({
       where: { full_name: full_name },
       defaults: {
@@ -529,10 +553,11 @@ app.post('/add', ensureAuthenticated, function(req, res) {
         package.save()
       };
 
-      res.redirect(parsedUrl.pathname);
+      res.redirect(full_name);
     })
   } else {
-    res.render('repo', {user: req.user, no_repo: true, err: "Invalid url - try a github url!"})
+    req.flash('error', "Invalid GitHub URL");
+    res.redirect('add')
   }
 });
 
