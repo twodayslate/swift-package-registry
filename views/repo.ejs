@@ -36,16 +36,14 @@
 	    			<span class="fa fa-github"></span> <%= package.full_name %>
 	 			</a>
 
-				
-
 	 			<% if (package.github_release_tag && package.github_release_tag != package.github_default_branch) { %>
-	 			<div class="card my-md-3">
+	 			<div class="card my-3">
 	 				<div class="card-body">
 						<pre class="my-md-0">.Package(url: "<%= package.github_clone_url %>", .upToNextMajor(from: "<%= package.github_release_tag.replace("v", "") %>"))</pre>
 					</div>
 				</div>
 				<% } %>
-				<div class="card my-md-3">
+				<div class="card my-3">
 	 				<div class="card-body">
 	 					<pre class="my-md-0">.Package(url: "<%= package.github_clone_url %>", branch: "<%= package.github_default_branch %>")</pre>
 	 				</div>
