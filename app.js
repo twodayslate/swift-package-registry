@@ -11,6 +11,8 @@ const url = require('url');
 const process = require('process');
 var flash = require('connect-flash');
 var models  = require('./models');
+const { Op } = require("sequelize");
+const querystring = require('querystring');
 
 
 var GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID  || "";
@@ -20,8 +22,9 @@ var Docker = require('dockerode');
 var docker = new Docker();
 var fs = require('fs');
 
-
 var github = require('octonode');
+
+const { graphql } = require("@octokit/graphql");
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
 //   serialize users into and deserialize users out of the session.  Typically,
@@ -37,6 +40,7 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
+var uuid = require('uuid');
 
 // Use the GitHubStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
@@ -46,21 +50,43 @@ passport.use(new GitHubStrategy({
     clientID: GITHUB_CLIENT_ID,
     clientSecret: GITHUB_CLIENT_SECRET,
     callbackURL: process.env.GITHUB_CALLBACK_URL || "http://127.0.0.1:3000/auth/github/callback"
-  },
-  function(accessToken, refreshToken, profile, done) {
+  }, function(accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
+
     process.nextTick(function () {
-      var client = octonode.client(accessToken);
-		profile.accessToken = accessToken;
-		return done(null, profile);
-      // To keep the example simple, the user's GitHub profile is returned to
-      // represent the logged-in user.  In a typical application, you would want
-      // to associate the GitHub account with a user record in your database,
-      // and return that user instead.
-      
+        var client = octonode.client(accessToken);
+        console.log(profile)
+        models.User.findOrCreate({
+            where: {
+                github_id: profile.id
+            },
+            defaults: {
+                github_id: profile.id,
+                uuid: uuid.v5(profile.id.toString(), "5fbbd15b-dc52-4c15-94db-3c12fc523192"),
+                accessToken: accessToken,
+                passport_github2_raw: JSON.stringify(profile),
+                github_login: profile.username
+            }
+        }).then(function(users, created) {
+            const user = users[0];
+
+            user.github_login = profile.username;
+            user.accessToken = accessToken;
+
+            if (user.github_id == "1085707") {
+                user.isAdmin = true
+                user.isMod = true
+            }
+
+            user.save()
+
+            console.log(user)
+
+
+            return done(null, user);
+        });
     });
-  }
-));
+}));
 
 // db
 var db = require('./models')
@@ -132,20 +158,34 @@ app.get('/all', function(req, res) {
 });
 
 app.get('/account', ensureAuthenticated, function(req, res){
-  let pageSize = 50;
-  let currentPage = parseInt(req.query.page) || 1;
-  let me = octonode.client(req.user.accessToken).me();
-	me.repos({
-  page: currentPage,
-  per_page: pageSize
-}, function(err, repos, h) {
-  let nextPage = currentPage + 1;
-		res.render('account', { user: req.user, repos: repos, me: me, page:currentPage, pageSize:pageSize, nextPage:nextPage, title: "Account"});
-	});
+    let pageSize = 50;
+    let currentPage = parseInt(req.query.page) || 1;
+    let me = octonode.client(req.user.accessToken).me();
+
+    me.info(function(err, info) {
+        if (err) {
+            // todo: render error
+            return
+        }
+        me.repos({
+            page: currentPage,
+            per_page: pageSize
+        }, function(err, repos, h) {
+            if(err) {
+                // todo: render error
+                return
+            }
+            console.log("me", me)
+            console.log("repos", repos)
+
+            let nextPage = currentPage + 1;
+            res.render('account', { user: req.user, repos: repos, user_info: info, page:currentPage, pageSize:pageSize, nextPage:nextPage, title: "Account"});
+        });
+    })
 });
 
 app.get('/login', function(req, res){
-	res.render('login', {user: req.user, title: "Login"} );
+    res.render('login', {user: req.user, title: "Login"} );
 });
 
 // GET /auth/github
@@ -177,13 +217,34 @@ app.get('/logout', function(req, res){
 });
 
 app.get('/:user/:repo', function(req, res) {
+    let full_name = req.params.user + '/' + req.params.repo
   models.Package.findOne({
     where: {
-      full_name: req.params.user + '/' + req.params.repo
+      full_name: {
+            [Op.iLike]: full_name
+        }
     }
   }).then(function(package) {
+    if (!package) {
+        res.render('404', {user: req.user, req: req})
+        return
+    }
+    if(package.full_name != full_name) {
+        res.redirect('/' + package.full_name)
+        return
+    }
     if (package) {
-      res.render('repo', {user: req.user, package: package, title: package.name || package.full_name})
+
+        if(!req.user) {
+            res.render('repo', {user: req.user, package: package, title: package.name || package.full_name, repo_info: null})
+        } else {
+            var client = github.client(req.user.accessToken);
+            var ghrepo = client.repo(package.full_name);
+            ghrepo.info(function(err, repo_info) {
+                console.log(repo_info, req.user)
+                res.render('repo', {user: req.user, package: package, title: package.name || package.full_name, repo_info: repo_info})
+            })
+        }
     } else {
       res.render('404', {user: req.user, req: req} )
     }
@@ -192,6 +253,43 @@ app.get('/:user/:repo', function(req, res) {
     console.error(error);
   });
 });
+
+app.get('/processing', function(req, res) {
+    models.Package.findAll({
+    where: {
+        processing: true,
+    },
+    order: [[models.sequelize.col('full_name'), 'ASC'], [models.sequelize.col('name'), 'DESC']]
+  }).then(function(packages) {
+      res.render('packages', {user: req.user, packages: packages, title: "All Packages"})
+  })
+})
+
+app.post('/delete/:id', ensureAdmin, function(req, res) {
+    models.Package.findOne({
+        where: {
+            id: req.params.id
+        }
+    }). then(function(package) {
+        if(package) {
+            package.destroy()
+        }
+        res.redirect("/")
+    })
+});
+
+app.get('/broke', function(req, res) {
+    models.Package.findAll({
+    where: {
+        processing_error: {
+            [Op.ne]: null
+        }
+    },
+    order: [[models.sequelize.col('full_name'), 'ASC'], [models.sequelize.col('name'), 'DESC']]
+  }).then(function(packages) {
+      res.render('packages', {user: req.user, packages: packages, title: "All Packages"})
+  })
+})
 
 app.get('/about', function(req, res) {
   fs.readFile('README.md', 'utf-8', function(err, contents) {
@@ -219,25 +317,68 @@ app.get('/about', function(req, res) {
   })
 });
 
-const { Op } = require("sequelize");
-app.get("/search", function(req, res) {
-  console.log(req.query.term)
-  let term = req.query.term || "";
-  let wildcard = '%' + term + "%"
 
-  console.log(wildcard)
+app.get("/search", function(req, res) {
+  var wildcard = "%%"
+  var term = ""
+  var orStatement = []
+  var andStatement = []
+
+  // todo: improve search
+
+
+  if (Array.isArray(req.query.term)) {
+    wildcard = ""
+    req.query.term.forEach(function(term) {
+        wildcard = wildcard + "%" + term
+    });
+    wildcard = wildcard + "%"
+    term = req.query.term[0]
+  } else {
+    term = req.query.term || "";
+    wildcard = '%' + term + "%"
+  }
+
+  if (wildcard != "" && wildcard != "%%") {
+    orStatement.push({
+        full_name: { [Op.iLike]: wildcard}
+    })
+
+    orStatement.push({
+        github_description: { [Op.iLike]: wildcard}
+    })
+  }
+  
+  if (Array.isArray(req.query.topic)) {
+    andStatement.push({
+        github_topics: { [Op.contains]: req.query.topic}
+    })
+  } else {
+    let topic =  req.query.topic || ""
+    if (topic != "") {
+        orStatement.push({
+            github_topics: { [Op.contains]: [topic]}
+        })
+      }
+  }
+
+
+    var where = {
+        processing: false,
+    }
+
+      if (orStatement && orStatement.length > 0) {
+        where[Op.or] =  orStatement
+      }
+
+      if (andStatement && andStatement.length > 0) {
+        where[Op.and] = andStatement
+      }
+
+      console.log(where)
 
   models.Package.findAll({
-    where: {
-        processing: false,
-        [Op.or] : [{
-          full_name: {
-            [Op.iLike]: wildcard
-          }}, 
-          {github_description: {
-            [Op.iLike]: wildcard
-          }}]
-    },
+    where: where,
     order: [[models.sequelize.col('github_stars'), 'DESC'], [models.sequelize.col('name'), 'DESC']]
   }).then(function(packages) {
       res.render('search', {user: req.user, packages: packages, term: term, title: term + " Search"})
@@ -515,7 +656,40 @@ app.post('/add', ensureAuthenticated, function(req, res) {
             }
           }
 
-          
+          const graphqlWithAuth = graphql.defaults({
+              headers: {
+                authorization: 'token ' + req.user.accessToken
+              }
+            });
+
+          const { tags } = graphqlWithAuth({query: `
+              query topics($owner: String!, $repo: String!) {
+                  repository(owner: $owner, name: $repo) {
+                    repositoryTopics(first: 10) {
+                      edges {
+                        node {
+                          topic {
+                            name
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+            `, 
+                owner: repo_info.owner.login,
+                repo: repo_info.name
+            }).then(function(tags, thing) {
+                package.github_topics = [];
+                tags.repository.repositoryTopics.edges.forEach(function(tag) {
+                    package.github_topics.push(tag.node.topic.name)
+                })
+
+                package.save()
+            });
+
+          console.log('tags')
+          console.log(tags)
 
           package.processing_error = undefined;
 
@@ -533,17 +707,14 @@ app.post('/add', ensureAuthenticated, function(req, res) {
             package.github_release_raw = repo_release.toString()
             package.github_release_name = repo_release.name;
             package.github_release_body = marked(repo_release.body);
+            package.github_release_date = repo_release.published_at
+            package.github_release_html_url = repo_release.html_url
           }
           package.processing = false;
 
-          console.log(package)
+          //console.log(package)
 
           package.save()
-
-          console.log(readme);
-          console.log(tool_version);
-          console.log(description);
-          console.log(dependencies);
       }
       try {
         parsePackage(ghrepo, versions[index], cb);
@@ -563,7 +734,6 @@ app.post('/add', ensureAuthenticated, function(req, res) {
 
 app.listen(3000);
 
-
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
 //   the request is authenticated (typically via a persistent login session),
@@ -572,4 +742,20 @@ app.listen(3000);
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login')
+}
+
+function ensureMod(req, res, next) {
+    if (req.isAuthenticated() && req.user.isMod) {
+        return next()
+    }
+
+    res.redirect('/login')
+}
+
+function ensureAdmin(req, res, next) {
+    if (req.isAuthenticated() && req.user.isAdmin) {
+        return next()
+    }
+
+    res.redirect('/login')
 }

@@ -5,7 +5,12 @@
 			<tr>
 			<th scope="col">Repository</th>
 			<th scope="col">Description</th>
+			<% if (user && user.isAdmin) { %>
+				<th scope=col>Admin</th>
+			<% } %>
 			</tr>
+			
+
 		</thead>
 		<tbody>
 	  <% packages.forEach(function(package){ %>
@@ -13,6 +18,10 @@
 			<td><a href="/<%= package.full_name %>"><%= package.name || package.full_name %></a></td>
 
 			<td><%= package.processing_error || package.github_description %></td>
+
+			<% if (user && user.isAdmin) { %>
+			<td><form action="/delete/<%= package.id %>" method="POST"><button type="submit" class="btn btn-primary">Delete</button></form></td>
+			<% } %>
 		</tr>
 	  <% }); %>
 	  </tbody>

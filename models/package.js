@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
 
     github_repo_raw: DataTypes.TEXT,
     github_repo_info_raw: DataTypes.TEXT,
-    
+
     github_id: DataTypes.BIGINT,
     github_default_branch: DataTypes.STRING,
     
@@ -20,15 +20,18 @@ module.exports = (sequelize, DataTypes) => {
     github_html_url: DataTypes.STRING,
     github_clone_url: DataTypes.STRING,
 
-    github_release_raw: DataTypes.TEXT, 
+    github_release_raw: DataTypes.TEXT,
     github_release: DataTypes.STRING,
     github_release_tag: DataTypes.STRING,
+    github_release_date: DataTypes.DATE,
     github_release_name: DataTypes.STRING,
     github_release_body: DataTypes.TEXT,
+    github_release_html_url: DataTypes.STRING,
     github_stars: {
         type: DataTypes.INTEGER,
         defaultValue: 0
     },
+    github_topics: DataTypes.ARRAY(DataTypes.STRING),
 
     processing_error: DataTypes.STRING,
     processing: DataTypes.BOOLEAN,

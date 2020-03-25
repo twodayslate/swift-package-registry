@@ -1,16 +1,4 @@
 <div class="container" id="account">
-	<p>ID: <%= user.id %></p>
-	<p>Username: <%= user.username %></p>
-	<p>Name: <a href="<%= user.profileUrl %>"><%= user.displayName %></a></p>
-
-	<% if (user.emails) { %>
-	<p>Email: <%= user.emails[0].value %></p>
-	<% } %>
-
-	<% if (user.photos) { %>
-	<p>Avatar: <img src="<%= user.photos[0].value %>" width="64px" /></p>
-	<% } %>
-
 	<% if (repos.length > 0) { %>
 		<h3>Your Public Swift Repositories</h3>
 		<table class="table table-responsive table-striped table-hover">
@@ -23,7 +11,7 @@
 			</thead>
 			<tbody>
 		  <% repos.forEach(function(repo){ %>
-			<% if (repo.language === "Swift" && repo.owner.login === user.username) { %>
+			<% if (repo.language === "Swift" && repo.owner.login === user.github_login) { %>
 			<tr>
 				<td><a href="<%= repo.html_url %>"><%= repo.name %></a></td>
 
@@ -36,13 +24,12 @@
 					</form>
 				</td>
 
-			<!-- <td><pre><%= JSON.stringify(repo) %></pre></td> -->
 			</tr>
 			<% } %>
 		  <% }); %>
 		  </tbody>
 		</table>
-		<% if (user._json.public_repos > pageSize)  { %>
+		<% if (user_info.public_repos > pageSize)  { %>
 			<nav aria-label="Page navigation example">
 			  	<ul class="pagination justify-content-center">
 			  		<% if(page <= 1) { %>
@@ -57,7 +44,7 @@
 			    	<% } %> 	
 			    	<li class="page-item active" aria-current="page"><a class="page-link" href="?page=<%= page %>"><%= page %></a></li>
 
-			    	<% if (page*pageSize > user._json.public_repos) { %>
+			    	<% if (page*pageSize > user_info.public_repos) { %>
 				    	<li class="page-item disabled">
 				      	<a class="page-link" href="?page=<%= nextPage %>" aria-disabled="true">Next</a>
 				    	</li>
