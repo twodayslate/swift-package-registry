@@ -483,7 +483,10 @@ function parsePackage(ghrepo, swift_version, callback) {
               });
 
               console.log("release", repo_release);
-              release_tag = repo_release.tag_name
+              if (repo_release) {
+                release_tag = repo_release.tag_name
+              }
+              
             } else {
               console.log("does not have any releases");
             }
@@ -582,7 +585,7 @@ app.post('/add', ensureAuthenticated, function(req, res) {
     return
   }
   
-  if(parsedUrl.hostname == "github.com") {
+  if(parsedUrl.hostname == "github.com" || parsedUrl.hostname == "swiftpackageregistry.com" || parsedUrl.hostname == "swiftpkg.dev") {
     let full_name = parsedUrl.pathname.replace(".git","").replace(/^\/|\/$/g, ''); // https://stackoverflow.com/a/3840645/193772
     if (full_name.split("/").length != 2) {
       req.flash('error', 'Invalid GitHub URL')
