@@ -71,6 +71,8 @@ module.exports = app => {
     res.locals.req = req
     res.locals.flash = req.flash()
 
+    res.locals.packageCount = await db.Package.count({ where: {processing: false, error: null} })
+
     next()
   })
 
