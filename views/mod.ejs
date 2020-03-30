@@ -3,6 +3,7 @@
 	<table class="table table-responsive table-striped table-hover">
 		<thead class="thead-dark">
 			<tr>
+				<th scope="col">ID</th>
 				<th scope="col">Repository</th>
 				<th scope="col">Description</th>
 				<th scope="col"></th>
@@ -14,6 +15,7 @@
 		<tbody>
 	  <% processing_packages.forEach(function(package){ %>
 		<tr>
+			<td><%= package.id %></td>
 			<td><% if(package.info) { %><a href="/<%= package.info.full_name %>"><%= package.info.full_name %></a><% } %></td>
 
 			<td><% if(package.info) { %><%= package.info.description %><% } %></td>
@@ -40,6 +42,7 @@
 	<table class="table table-responsive table-striped table-hover">
 		<thead class="thead-dark">
 			<tr>
+				<th scope="col">ID</th>
 				<th scope="col">Repository</th>
 				<th scope="col">Description</th>
 				<th scope="col">Error</th>
@@ -52,6 +55,7 @@
 		<tbody>
 	  <% all_packages.forEach(function(package){ %>
 		<tr>
+			<td><%= package.id %></td>
 			<td><% if(package.info) { %><a href="/<%= package.info.full_name %>"><%= package.info.full_name %></a><% } else { %><%= package.full_name %><% } %></td>
 			<td><% if(package.info) { %><%= package.info.description %><% } %></td>
 			<td><%= package.error %></td>
