@@ -3,7 +3,13 @@ module.exports = (sequelize, DataTypes) => {
   const Package = sequelize.define('Package', {
     github_id: DataTypes.BIGINT, // using this so we don't have to search in info
 
-    info: DataTypes.JSONB,
+    info: {
+      type: DataTypes.JSONB,
+      allowNull: false,
+      validate: {
+        notNull: { msg: "repository inforamtion is required" }
+      }
+    },
     latest_release: DataTypes.JSONB,
     topics: DataTypes.ARRAY(DataTypes.STRING),
     processing: {
