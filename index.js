@@ -85,7 +85,11 @@ module.exports = app => {
   require('./lib/delete')(express_app)
 
   express_app.get('/all', async function (req, res) {
-    db.Package.findAll().then(function (packages) {
+    db.Package.findAll({
+      where: {
+        processing: false
+      }
+    }).then(function (packages) {
       req.robot.log('user', req.user)
       res.render('packages', { title: 'All', heading: 'All Swift Packages', packages: packages })
     })
