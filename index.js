@@ -139,21 +139,19 @@ module.exports = app => {
     if (pkg) {
       const info = await context.github.repos.get({ owner, repo: name })
 
-      db.Package.findOrCreate({
+       const [_package, created] = await db.Package.findOrCreate({
         where: { github_id: repo.id },
         defaults: {
           github_id: repo.id,
           info: info
         }
-      }).then(function (packages, created) {
-        const _package = packages[0]
+      })
 
         _package.info = repository.data
         is_installed = true
         _package.save()
 
         parsePackageContext(context, _package)
-      })
     }
   }
 
