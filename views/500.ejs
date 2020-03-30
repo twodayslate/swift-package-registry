@@ -1,0 +1,13 @@
+<div class="container">
+<h2>500</h2>
+Server Error!
+
+<% if (locals.flash && flash.err_message) { %>
+	<pre><%= flash.err_message %></pre>
+<% } %>
+<% if (locals.flash && flash.err) { %>
+	<pre><%= JSON.stringify(flash.err) %></pre>
+<% } %>
+
+
+</div>

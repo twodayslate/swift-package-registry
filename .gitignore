@@ -1,4 +1,11 @@
-dev_source
+node_modules
+npm-debug.log
+*.pem
+!mock-cert.pem
+.env
+package-lock.json
+coverage
+
 
 # General
 .DS_Store

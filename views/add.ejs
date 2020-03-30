@@ -1,22 +1,31 @@
 <div class="container" id="add">
-	<h2>Add a package</h2>
+    <div class="jumbotron my-4">
+        <h2 class="display-4">GitHub App Support</h2>
+        <p class="lead">Add and update your Swift packages automatically by adding the <a href="/"><%= whoami.name %></a> <a href="<%= whoami.html_url %>">GitHub App</a> to your repository!</p>
+          <hr class="my-4">
+          <p>Swift Packages can be added manually or when added via the <a href="/"><%= whoami.name %></a> <a href="<%= whoami.html_url %>">GitHub App</a>. Swift Packages are updated automatically when a new release is published.</p>
+          <a class="btn btn-primary btn-lg" href="<%= whoami.html_url %>/installations/new/permissions?target_id=<%= whoami.owner.id %>"" role="button">Add GitHub App</a>
+    </div>
 
-	<% if (flash && flash.error) { %>
-		<div class="alert alert-warning alert-dismissible fade show" role="alert">
-  			<%= flash.error %>
-  			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    			<span aria-hidden="true">&times;</span>
-  			</button>
-		</div>
-	<% } %>
-	<form action="/add" method="post" class="form">
-		<div class="input-group">
-	    <input class="form-control form-control-lg" type="url" placeholder="https://github.com/%s/%s" id="url" name="url">
-	    <span class="input-group-append">
-	    	<button type="submit" class="btn btn-primary">Add</button>
-	    	</span>
-	    </input>
-	    </div>
-	</form>
-	<small class="text-muted container">Only public repositories can be added to the <a href="/">Swift Package Registry</a></small>
+    <h2>Add a Swift package</h2>
+    <% if (flash && flash.error) { %>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <%= flash.error %>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    <% } %>
+    <form action="/add" method="post" class="form">
+        <div class="input-group">
+        <input class="form-control form-control-lg" type="url" placeholder="https://github.com/%s/%s" id="url" name="url">
+        <span class="input-group-append">
+            <button type="submit" class="btn btn-primary">Add</button>
+            </span>
+        </input>
+        </div>
+    </form>
+    <div class="container">
+        <small class="text-muted">Only public repositories can be successfully added to the <a href="/">Swift Package Registry</a>. Swift package will not update automatically unless the <a href="<%= whoami.html_url %>">GitHub App</a> is installed on the repository.</small>
+    </div>
 </div>

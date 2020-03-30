@@ -5,9 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <% if (locals.title) { %>
-            <title><%= title %> - Swift Package Registry</title>
+            <title><%= title %> - <%= whoami.name %></title>
         <% } else { %>
-            <title>Swift Package Registry</title>
+            <title><%= whoami.name %></title>
         <% } %>
 
         <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
@@ -32,10 +32,14 @@
         <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.css" rel="stylesheet" type="text/css">
+
+      <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css">
+
         <link rel="stylesheet" type="text/css" href="/css/style.css">
         
 
-    </head>
+
+	</head>
     <body>
         <div class="container my-2">
             <nav class="navbar navbar-expand-lg navbar-light bg-light rounded my-3">
@@ -51,10 +55,13 @@
                         <li class="nav-item"><a href="/add" class="nav-link">Add Package</a></li>
                     </ul>
                     <ul class="navbar-nav">
-                        <% if (!user) { %>
+                        <% if (!locals.user) { %>
                             <li class="nav-item"><a href="/login" class="nav-link">Log In</a></li>
                         <% } else { %>
-                            <li class="nav-item"><a href="/account" class="nav-link">Account</a></li>
+                            <% if(user.isMod) { %>
+                                <li class="nav-item"><a href="/mod" class="nav-link">Mod</a></li>
+                            <% } %>
+                            <li class="nav-item"><a href="/account" class="nav-link" data-toggle="tooltip" title="<%= user.github_login %>">Account</a></li>
                             <li class="nav-item"><a href="/logout" class="nav-link">Log Out</a></li>
                         <% } %>
                     </ul>
@@ -68,14 +75,15 @@
                 <div class="container">
                     <div class="row">
                         <div class="col">
-                            <img src="/images/Swift_logo.png" width="24" height="24" class="mb-2" alt="">
+                            <a href="/whoami"><img src="/images/Swift_logo.png" width="24" height="24" class="mb-2" alt=""></a>
                             <small class="d-block mb-3 text-muted">Copyright &copy; 2020 All rights reserved.</small>
                             <small class="d-block mb-3 text-muted">Swift and the Swift logo are trademarks of Apple Inc.</small>
                         </div>
                         <div class="col">
                             <h5><a href="/about">About</a></h5>
                             <ul class="list-unstyled text-small">
-                                <li><a href="https://github.com/twodayslate/swift-package-registry/">GitHub</a></li>
+                            	<li><a href="<%= locals.whoami.html_url %>">GitHub App</a></li>
+                                <li><a href="https://github.com/twodayslate/swift-package-registry/">GitHub Repository</a></li>
                                 <li><a href="https://twitter.com/twodayslate">Twitter</a></li>
                                 <li><a href="https://zac.gorak.us">zac.gorak.us</a></li>
                             </ul>
@@ -91,5 +99,11 @@
 
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
         <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+        <script type="text/javascript">
+        $(function () {
+		  $('[data-toggle="tooltip"]').tooltip()
+		})
+		</script>
     </body>
 </html>

@@ -1,27 +1,23 @@
 <div class="container" id="packages">
-	<h2>All Swift Packages</h2>
+	<% if (locals.heading) { %>
+		<h2><%= heading %></h2>
+	<% } else { %>
+		<h2>Swift Packages</h2>
+	<% } %>
+
 	<table class="table table-responsive table-striped table-hover">
 		<thead class="thead-dark">
 			<tr>
 			<th scope="col">Repository</th>
 			<th scope="col">Description</th>
-			<% if (user && user.isAdmin) { %>
-				<th scope=col>Admin</th>
-			<% } %>
 			</tr>
-			
-
 		</thead>
 		<tbody>
 	  <% packages.forEach(function(package){ %>
 		<tr>
-			<td><a href="/<%= package.full_name %>"><%= package.name || package.full_name %></a></td>
+			<td><a href="/<%= package.info.full_name %>"><%= package.info.name %></a></td>
 
-			<td><%= package.processing_error || package.github_description %></td>
-
-			<% if (user && user.isAdmin) { %>
-			<td><form action="/delete/<%= package.id %>" method="POST"><button type="submit" class="btn btn-primary">Delete</button></form></td>
-			<% } %>
+			<td><%= package.info.description %></td>
 		</tr>
 	  <% }); %>
 	  </tbody>

@@ -1,5 +1,16 @@
 <div class="container" id="index">
 
+<% if(locals.flash) { %>
+	<% if(flash.error) { %>
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	        <%= flash.error.message || flash.error %>
+	        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	            <span aria-hidden="true">&times;</span>
+	        </button>
+	    </div>
+	<% } %>
+<% } %> 
+
 <form class="form my-3" action="/search" method="GET">
 	<div class="input-group">
     <input class="form-control form-control-lg" type="text" placeholder="Search Swift Package Registry" id="term" name="term">
@@ -23,9 +34,9 @@
 		<tbody>
 	  <% popular_packages.forEach(function(package){ %>
 		<tr>
-			<td><a href="/<%= package.full_name %>"><%= package.name %></a></td>
+			<td><a href="/<%= package.info.full_name %>"><%= package.info.name %></a></td>
 
-			<td><%= package.github_description %></td>
+			<td><%= package.info.description %></td>
 		</tr>
 	  <% }); %>
 	  </tbody>
@@ -34,12 +45,12 @@
 	
 </div>
 <div class="col-sm-4">
-	<h2>New Swift Packages</h2>
+	<h2>Recently Added Swift Packages</h2>
 	<ul class="list-group list-group-flush">
 	  <% recently_created_packages.forEach(function(package){ %>
 		<li class="list-group-item d-flex justify-content-between align-items-center">
-			<a href="/<%= package.full_name %>"><%= package.name %></a>
-			<span class="badge badge-primary badge-pill"><%= package.github_stars %></span>
+			<a href="/<%= package.info.full_name %>"><%= package.info.name %></a>
+			<span class="badge badge-primary badge-pill"><%= package.info.stargazers_count %></span>
 		</li>
 	  <% }); %>
 	  </tbody>

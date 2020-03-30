@@ -20,9 +20,9 @@
 	<tbody>
   <% packages.forEach(function(package){ %>
 	<tr>
-		<td><a href="/<%= package.full_name %>"><%= package.name || package.full_name %></a></td>
+		<td><a href="/<%= package.info.full_name %>"><%= package.info.name %></a></td>
 
-		<td><%= package.processing_error || package.github_description %></td>
+		<td><%= package.error || package.info.description %></td>
 	</tr>
   <% }); %>
   </tbody>

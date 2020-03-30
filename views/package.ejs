@@ -1,5 +1,5 @@
 <div class="container repo">
-	<% if (package.processing) { %>
+	<% if (!package || package.processing || !package.info) { %>
 		<div class="text-center">
 			<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
 	  			<span class="sr-only">Loading...</span>
@@ -21,67 +21,65 @@
 
 		</script>
 	<% } else { %>
-		<% if (package.processing_error) { %>
+		<% if (package.error) { %>
 			<h2>Error processing</h2>
-			<pre><%= package.processing_error %></pre>
+			<pre><%= package.error %></pre>
 		<% } else { %>
 			<div class="jumbotron py-3">
 				<div class="row">
 					<div class="col">
 						<div class="d-flex">
-							<h2 class="align-self-baseline"><%= package.name %></h2>
-							<h3 class="flex-fill align-self-baseline text-muted mx-1"><%= package.github_release_tag %></h3>
+							<h2 class="align-self-baseline"><%= package.info.name %></h2>
+
+							<% var release = package.info.default_branch %>
+							<% if (package.latest_release) { release = package.latest_release.tag_name.replace('v','')} %>
+
+							<h3 class="flex-fill align-self-baseline text-muted mx-1"><%= release %></h3>
 						</div>
 					</div>
 					<div class="col d-flex">
-						<span class="align-self-baseline align-self-end ml-auto"><a class="github-button" href="https://github.com/<%= package.full_name %>" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star <%= package.full_name %> on GitHub">Star</a></span>
+						<span class="align-self-baseline align-self-end ml-auto"><a class="github-button" href="https://github.com/<%= package.info.full_name %>" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star <%= package.info.full_name %> on GitHub">Star</a></span>
 					</div>	
 				</div>
 
-				<div><%= package.github_description %></div>
+				<div><%= package.info.description %></div>
 
-				<% if(package.github_topics) { %>
+				<% if(package.topics) { %>
 					<div class="my-3">
-					<% package.github_topics.forEach(function(tag) { %>
+					<% package.topics.forEach(function(tag) { %>
 						<a class="badge badge-primary" href="/search?topic=<%= tag %>"><%= tag %></a>
 					<% }) %>
 					</div>
 				<% } %>
 
-				<a class="btn btn-block btn-social btn-github my-3" href="<%=package.github_html_url %>">
-	    			<span class="fa fa-github"></span> <%= package.full_name %>
+				<a class="btn btn-block btn-social btn-github my-3" href="<%=package.info.html_url %>">
+	    			<span class="fa fa-github"></span> <%= package.info.full_name %>
 	 			</a>
 
-	 			<% if (package.github_release_tag && package.github_release_tag != package.github_default_branch) { %>
+	 			<% if (package.latest_release) { %>
 	 			<div class="card my-3">
 	 				<div class="card-body">
-						<pre class="my-md-0">.Package(url: "<%= package.github_clone_url %>", .upToNextMajor(from: "<%= package.github_release_tag.replace("v", "") %>"))</pre>
+						<pre class="my-md-0">.Package(url: "<%= package.info.clone_url %>", .upToNextMajor(from: "<%= package.latest_release.tag_name.replace("v", "") %>"))</pre>
 					</div>
 				</div>
 				<% } %>
 				<div class="card my-3">
 	 				<div class="card-body">
-	 					<pre class="my-md-0">.Package(url: "<%= package.github_clone_url %>", branch: "<%= package.github_default_branch %>")</pre>
+	 					<pre class="my-md-0">.Package(url: "<%= package.info.clone_url %>", branch: "<%= package.info.default_branch %>")</pre>
 	 				</div>
 	 			</div>
 				
 			</div>
 
 			
-			<% if(package.github_release_name && package.github_release_body) { %>
+			<% if(package.latest_release) { %>
 				<div class="card my-md-3">
 					<h3 class="card-header">What's New</h3>
 					<div class="card-body whatsnew">
-						<% if (package.github_release_html_url) { %>
-							<h3 class="card-title"><a href="<%= package.github_release_html_url %>"><%= package.github_release_name %></a></h3>
-						<% } else { %>
-							<h3 class="card-title"><%= package.github_release_name %></h3>
-						<% } %>
-						<% if (package.github_release_date) { %>
-							<h6 class="text-muted card-subtitle"><%= package.github_release_date %></h6>
-						<% } %>
+						<h3 class="card-title"><a href="<%= package.latest_release.html_url %>"><%= package.latest_release.name %></a></h3>
+						<h6 class="text-muted card-subtitle"><%= package.latest_release.published_at %></h6>
 						<div class="card-text">
-							<%- package.github_release_body %>
+							<%- package.latest_release.body %>
 						</div>
 					</div>
 				</div>
@@ -91,7 +89,7 @@
 
 			<div class="col-sm-8">
 				<div class="readme">
-					<%- package.readme_html %>
+					<%- package.readme || package.readme_html || package.readme_raw %>
 				</div>
 			</div>
 
@@ -99,14 +97,13 @@
 				<h3>Description</h3>
 
 				<ul class="list-group list-group-flush">
-					<li class="list-group-item">Swift Tools <%= package.swift_tool_version %></li>
+					<li class="list-group-item">Swift Tools <%= package.tools_version %></li>
 				</ul>
 
 				<button type="button" class="btn btn-link" data-toggle="modal" data-target=".bd-description-modal">View Raw Output</button>
 
 				<div class="modal fade bd-description-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
 				  <div class="modal-dialog modal-xl" role="document">
-
 				    <div class="modal-content">
 				    	<div class="modal-header">
 					    	<h5 class="modal-title">Description</h5>
@@ -115,7 +112,25 @@
 					        </button>
 					       </div>
 				    	<div class="modal-body">
-				      		<pre><%= package.swift_describe_raw %></pre>
+				      		<pre><%= JSON.stringify(package.description, null, 4) %></pre>
+				      	</div>
+				    </div>
+				  </div>
+				</div>
+
+				<button type="button" class="btn btn-link" data-toggle="modal" data-target=".bd-dump-modal">View Package</button>
+
+				<div class="modal fade bd-dump-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+				  <div class="modal-dialog modal-xl" role="document">
+				    <div class="modal-content">
+				    	<div class="modal-header">
+					    	<h5 class="modal-title">Package Dump</h5>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          <span aria-hidden="true">&times;</span>
+					        </button>
+					       </div>
+				    	<div class="modal-body">
+				      		<pre><%= JSON.stringify(package.dump, null, 4) %></pre>
 				      	</div>
 				    </div>
 				  </div>
@@ -123,11 +138,10 @@
 
 				<h3>Dependencies</h3>
 
-				<% let deps = JSON.parse(package.swift_dependencies_raw.substr(package.swift_dependencies_raw.indexOf('{'))); %>
 				<ul class="list-group list-group-flush">
-				<% if (deps.dependencies.length > 0) { %>
+				<% if (package.dependencies && package.dependencies.dependencies && package.dependencies.dependencies.length > 0) { %>
 					
-					<% deps.dependencies.forEach(function(dep) { %>
+					<% package.dependencies.dependencies.forEach(function(dep) { %>
 						<% let depurl = new URL(dep.url); %>
 						<% if (depurl.hostname == "github.com") { %>
 							<% let deppath = depurl.pathname.replace('.git', ''); %>
@@ -155,7 +169,7 @@
 					        </button>
 					       </div>
 				    	<div class="modal-body">
-				      		<pre><%= package.swift_dependencies_raw %></pre>
+				      		<pre><%= JSON.stringify(package.dependencies, null, 4) %></pre>
 				      	</div>
 				    </div>
 				  </div>
@@ -165,19 +179,6 @@
 			</div>
 
 			<small class="text-muted">Last updated: <%= package.updatedAt %></small>
-
-			<% if (user && repo_info && repo_info.owner.id == user.github_id) { %>
-				<div class="card my-3">
-					<div class="card-header"><h3>Owner Tools</h3></div>
-					<div class="card-body">
-						<form action="/add" method="post">
-							<input name="url" id="url" type="hidden" value="<%= package.github_html_url %>" />
-							<button type="submit" class="btn btn-primary btn-sm">Refresh</button>
-						</form>
-					</div>
-					<div class="card-footer text-muted">These tools are only visible to the repository owner</div>
-				</div>
-			<% } %>
 		<% } %>
 	<% } %>
 </div>
