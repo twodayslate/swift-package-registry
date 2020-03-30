@@ -18,13 +18,15 @@
 
 			<td><% if(package.info) { %><%= package.info.description %><% } %></td>
 			<td>
+				<form action="/add" method="POST">
 				<% if(package.info) { %>
-					<form action="/add" method="POST">
-						<input type="hidden" id="url" name="url" value="<%= package.info.html_url %>"/>
-						<input type="hidden" id="reprocess" name="reprocess" value="True" />
-						<button type="submit" class="btn btn-primary">Process</button>
-					</form>
+					<input type="hidden" id="url" name="url" value="<%= package.info.html_url %>"/>
+				<% } else { %>
+					<input type="hidden" id="url" name="url" value="https://github.com/<%= package.full_name || package.name %>"/>
 				<% } %>
+					<input type="hidden" id="reprocess" name="reprocess" value="True" />
+					<button type="submit" class="btn btn-primary">Process</button>
+				</form>
 			</td>
 			<% if (locals.user && user.isAdmin) { %>
 				<td><form action="/delete/<%= package.id %>" method="POST"><button type="submit" class="btn btn-danger">Delete</button></form></td>
@@ -54,13 +56,15 @@
 			<td><% if(package.info) { %><%= package.info.description %><% } %></td>
 			<td><%= package.error %></td>
 			<td>
+				<form action="/add" method="POST">
 				<% if(package.info) { %>
-					<form action="/add" method="POST">
-						<input type="hidden" id="url" name="url" value="<%= package.info.html_url %>"/>
-						<input type="hidden" id="reprocess" name="reprocess" value="True" />
-						<button type="submit" class="btn btn-primary">Process</button>
-					</form>
+					<input type="hidden" id="url" name="url" value="<%= package.info.html_url %>"/>
+				<% } else { %>
+					<input type="hidden" id="url" name="url" value="https://github.com/<%= package.full_name || package.name %>"/>
 				<% } %>
+					<input type="hidden" id="reprocess" name="reprocess" value="True" />
+					<button type="submit" class="btn btn-primary">Process</button>
+				</form>
 			</td>
 			<% if (locals.user && user.isAdmin) { %>
 				<td><form action="/delete/<%= package.id %>" method="POST"><button type="submit" class="btn btn-danger">Delete</button></form></td>
