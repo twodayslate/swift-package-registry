@@ -4,7 +4,7 @@
 			<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
 	  			<span class="sr-only">Loading...</span>
 			</div>
-			<p>Package is still processing</p>
+			<p>Package is still processing. This should only take a few minutes.</p>
 		</div>
 
 		<script type="text/javascript">
@@ -58,7 +58,7 @@
 
 	 			<% if (package.latest_release) { %>
 	 			<div class="card my-3">
-	 				<div class="card-body markdown-body">
+	 				<div class="card-body">
 						<pre class="my-md-0">.Package(url: "<%= package.info.clone_url %>", .upToNextMajor(from: "<%= package.latest_release.tag_name.replace("v", "") %>"))</pre>
 					</div>
 				</div>
@@ -78,7 +78,7 @@
 					<div class="card-body whatsnew">
 						<h3 class="card-title"><a href="<%= package.latest_release.html_url %>"><%= package.latest_release.name %></a></h3>
 						<h6 class="text-muted card-subtitle"><%= package.latest_release.published_at %></h6>
-						<div class="card-text">
+						<div class="card-text markdown-body">
 							<%- package.latest_release.body %>
 						</div>
 					</div>
