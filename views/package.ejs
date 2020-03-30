@@ -56,18 +56,30 @@
 	    			<span class="fa fa-github"></span> <%= package.info.full_name %>
 	 			</a>
 
-	 			<% if (package.latest_release) { %>
 	 			<div class="card my-3">
 	 				<div class="card-body">
-						<pre class="my-md-0">.Package(url: "<%= package.info.clone_url %>", .upToNextMajor(from: "<%= package.latest_release.tag_name.replace("v", "") %>"))</pre>
+
+	 					<% if (package.latest_release) { %>
+			 				<div class="input-group mb-3">
+								<input readonly value=".Package(url: &quot;<%= package.info.clone_url %>&quot;, .upToNextMajor(from: &quot;<%= package.latest_release.tag_name.replace("v", "") %>&quot;))" class="form-control code-block" id="release-copy">
+								<span class="input-group-append">
+									<button class="btn clippy btn-secondary" data-clipboard-target="#release-copy" aria-label="Copy">
+		    							<i class="fa fa-copy" aria-hidden="true"></i><span class="d-none" aria-hidden="true"> Copy</span>
+									</button>
+								</span>
+							</div>
+						<% } %>
+
+						<div class="input-group">
+								<input readonly value=".Package(url: &quot;<%= package.info.clone_url %>&quot;, branch: &quot;<%= package.info.default_branch %>&quot;)" class="form-control code-block" id="branch-copy">
+								<span class="input-group-append">
+									<button class="btn clippy btn-secondary" data-clipboard-target="#branch-copy" aria-label="Copy">
+		    							<i class="fa fa-copy" aria-hidden="true"></i><span class="d-none" aria-hidden="true"> Copy</span>
+									</button>
+								</span>
+						</div>
 					</div>
 				</div>
-				<% } %>
-				<div class="card my-3">
-	 				<div class="card-body">
-	 					<pre class="my-md-0">.Package(url: "<%= package.info.clone_url %>", branch: "<%= package.info.default_branch %>")</pre>
-	 				</div>
-	 			</div>
 				
 			</div>
 

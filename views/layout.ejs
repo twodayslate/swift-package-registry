@@ -100,10 +100,23 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
         <script async defer src="https://buttons.github.io/buttons.js"></script>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+
         <script type="text/javascript">
         $(function () {
 		  $('[data-toggle="tooltip"]').tooltip()
 		})
+
+        var btns = document.querySelectorAll('.clippy');
+    var clipboard = new ClipboardJS(btns);
+
+    clipboard.on('success', function(e) {
+        console.log(e);
+    });
+
+    clipboard.on('error', function(e) {
+        console.log(e);
+    });
 		</script>
     </body>
 </html>
