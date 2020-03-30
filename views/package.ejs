@@ -58,7 +58,7 @@
 
 	 			<% if (package.latest_release) { %>
 	 			<div class="card my-3">
-	 				<div class="card-body">
+	 				<div class="card-body markdown-body">
 						<pre class="my-md-0">.Package(url: "<%= package.info.clone_url %>", .upToNextMajor(from: "<%= package.latest_release.tag_name.replace("v", "") %>"))</pre>
 					</div>
 				</div>
