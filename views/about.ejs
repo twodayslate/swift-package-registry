@@ -1,14 +1,16 @@
-<div class="container markdown-body" id="about">
-	<h2>About the Swift Package Manager</h2>
+<div class="container" id="about">
+	<div class="jumbotron">
+		<h2>About the Swift Package Manager</h2>
 
-	<p>
-		The <a href="https://swift.org/package-manager/">Swift Package Manager</a> is a tool for managing the distribution of Swift code. It’s integrated with the Swift build system to automate the process of downloading, compiling, and linking dependencies.
+		<p class="lead">
+			The <a href="https://swift.org/package-manager/">Swift Package Manager</a> is a tool for managing the distribution of Swift code. It’s integrated with the Swift build system to automate the process of downloading, compiling, and linking dependencies.
 
-		A package consists of Swift source files and a manifest file. The manifest file, called <samp>Package.swift</samp>, defines the package’s name and its contents using the <code>PackageDescription</code> module.
-	</p>
+			A package consists of Swift source files and a manifest file. The manifest file, called <samp>Package.swift</samp>, defines the package’s name and its contents using the <code>PackageDescription</code> module.
+		</p>
+	</div>
 
 	<% if(readme) { %>
-		<div class="readme">
+		<div class="readme markdown-body">
 			<%- readme %>
 		</div>
 	<% } %>
