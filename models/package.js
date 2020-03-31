@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.JSONB,
       allowNull: false,
       validate: {
-        notNull: { msg: "repository inforamtion is required" }
+        notNull: { msg: 'repository inforamtion is required' }
       }
     },
     latest_release: DataTypes.JSONB,
@@ -27,12 +27,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
-    // OLD/deprecated
-
-    name: DataTypes.STRING,
-    full_name: DataTypes.STRING,
-    readme_raw: DataTypes.TEXT,
-    readme_html: DataTypes.TEXT,
 
     createdAt: {
       type: DataTypes.DATE,

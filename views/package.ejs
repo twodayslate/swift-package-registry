@@ -22,9 +22,11 @@
 		</script>
 	<% } else { %>
 		<% if (package.error) { %>
-			<h2>Error processing</h2>
-			<pre><%= package.error %></pre>
-		<% } else { %>
+			<div class="alert alert-danger" role="alert">
+				<h2>Error processing</h2>
+				<pre><%= package.error %></pre>
+			</div>
+		<% } %>
 			<div class="jumbotron py-3">
 				<div class="row">
 					<div class="col">
@@ -99,98 +101,97 @@
 
 			<div class="row">
 
-			<div class="col-sm-8">
-				<div class="readme">
-					<%- package.readme || package.readme_html || package.readme_raw %>
-				</div>
-			</div>
-
-			<div class="col-sm-4">
-				<h3>Description</h3>
-
-				<ul class="list-group list-group-flush">
-					<li class="list-group-item">Swift Tools <%= package.tools_version %></li>
-				</ul>
-
-				<button type="button" class="btn btn-link" data-toggle="modal" data-target=".bd-description-modal">View Raw Output</button>
-
-				<div class="modal fade bd-description-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-				  <div class="modal-dialog modal-xl" role="document">
-				    <div class="modal-content">
-				    	<div class="modal-header">
-					    	<h5 class="modal-title">Description</h5>
-					        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					          <span aria-hidden="true">&times;</span>
-					        </button>
-					       </div>
-				    	<div class="modal-body">
-				      		<pre><%= JSON.stringify(package.description, null, 4) %></pre>
-				      	</div>
-				    </div>
-				  </div>
+				<div class="col-sm-8">
+					<div class="readme">
+						<%- package.readme || package.readme_html || package.readme_raw %>
+					</div>
 				</div>
 
-				<button type="button" class="btn btn-link" data-toggle="modal" data-target=".bd-dump-modal">View Package</button>
+				<div class="col-sm-4">
+					<h3>Description</h3>
 
-				<div class="modal fade bd-dump-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-				  <div class="modal-dialog modal-xl" role="document">
-				    <div class="modal-content">
-				    	<div class="modal-header">
-					    	<h5 class="modal-title">Package Dump</h5>
-					        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					          <span aria-hidden="true">&times;</span>
-					        </button>
-					       </div>
-				    	<div class="modal-body">
-				      		<pre><%= JSON.stringify(package.dump, null, 4) %></pre>
-				      	</div>
-				    </div>
-				  </div>
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item">Swift Tools <%= package.tools_version %></li>
+					</ul>
+
+					<button type="button" class="btn btn-link" data-toggle="modal" data-target=".bd-description-modal">View Raw Output</button>
+
+					<div class="modal fade bd-description-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+					  <div class="modal-dialog modal-xl" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Description</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								  <span aria-hidden="true">&times;</span>
+								</button>
+							   </div>
+							<div class="modal-body">
+								<pre><%= JSON.stringify(package.description, null, 2) %></pre>
+							</div>
+						</div>
+					  </div>
+					</div>
+
+					<button type="button" class="btn btn-link" data-toggle="modal" data-target=".bd-dump-modal">View Package</button>
+
+					<div class="modal fade bd-dump-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+					  <div class="modal-dialog modal-xl" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Package Dump</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								  <span aria-hidden="true">&times;</span>
+								</button>
+							   </div>
+							<div class="modal-body">
+								<pre><%= JSON.stringify(package.dump, null, 2) %></pre>
+							</div>
+						</div>
+					  </div>
+					</div>
+
+					<h3>Dependencies</h3>
+
+					<ul class="list-group list-group-flush">
+					<% if (package.dependencies && package.dependencies.dependencies && package.dependencies.dependencies.length > 0) { %>
+
+						<% package.dependencies.dependencies.forEach(function(dep) { %>
+							<% let depurl = new URL(dep.url); %>
+							<% if (depurl.hostname == "github.com") { %>
+								<% let deppath = depurl.pathname.replace('.git', ''); %>
+								<li class="list-group-item d-flex justify-content-between align-items-center"><a href="<%= deppath %>"><%= dep.name %></a><span class="badge badge-secondary badge-pill"><%= dep.version %></span></li>
+							<% } else { %>
+								<li class="list-group-item d-flex justify-content-between align-items-center"><%= dep.name %><span class="badge badge-secondary badge-pill"><%= dep.version %></span></li>
+							<% } %>
+						<% }) %>
+					<% } else { %>
+						<li class="list-group-item">None</li>
+					<% } %>
+					</ul>
+
+
+					<button type="button" class="btn btn-link" data-toggle="modal" data-target=".bd-example-modal-sm">View Raw Output</button>
+
+					<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+					  <div class="modal-dialog modal-xl" role="document">
+
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Dependencies</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								  <span aria-hidden="true">&times;</span>
+								</button>
+							   </div>
+							<div class="modal-body">
+								<pre><%= JSON.stringify(package.dependencies, null, 2) %></pre>
+							</div>
+						</div>
+					  </div>
+					</div>
+
 				</div>
-
-				<h3>Dependencies</h3>
-
-				<ul class="list-group list-group-flush">
-				<% if (package.dependencies && package.dependencies.dependencies && package.dependencies.dependencies.length > 0) { %>
-					
-					<% package.dependencies.dependencies.forEach(function(dep) { %>
-						<% let depurl = new URL(dep.url); %>
-						<% if (depurl.hostname == "github.com") { %>
-							<% let deppath = depurl.pathname.replace('.git', ''); %>
-							<li class="list-group-item d-flex justify-content-between align-items-center"><a href="<%= deppath %>"><%= dep.name %></a><span class="badge badge-secondary badge-pill"><%= dep.version %></span></li>
-						<% } else { %>
-							<li class="list-group-item d-flex justify-content-between align-items-center"><%= dep.name %><span class="badge badge-secondary badge-pill"><%= dep.version %></span></li>
-						<% } %>
-					<% }) %>
-				<% } else { %>
-					<li class="list-group-item">None</li>
-				<% } %>
-				</ul>
-
-
-				<button type="button" class="btn btn-link" data-toggle="modal" data-target=".bd-example-modal-sm">View Raw Output</button>
-
-				<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-				  <div class="modal-dialog modal-xl" role="document">
-
-				    <div class="modal-content">
-				    	<div class="modal-header">
-					    	<h5 class="modal-title">Dependencies</h5>
-					        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					          <span aria-hidden="true">&times;</span>
-					        </button>
-					       </div>
-				    	<div class="modal-body">
-				      		<pre><%= JSON.stringify(package.dependencies, null, 4) %></pre>
-				      	</div>
-				    </div>
-				  </div>
-				</div>
-				
-			</div>
 			</div>
 
 			<small class="text-muted">Last updated: <%= package.updatedAt %></small>
-		<% } %>
 	<% } %>
 </div>
