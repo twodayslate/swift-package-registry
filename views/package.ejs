@@ -21,6 +21,12 @@
 
 		</script>
 	<% } else { %>
+		<% if (package.info && package.info.archived) { %>
+			<div class="alert alert-warning" role="alert">
+				<h3>Warning: Package Archived</h3>
+				<p>This package is archived and has a low chance of being updated.</p>
+			</div>
+		<% } %>
 		<% if (package.error) { %>
 			<div class="alert alert-danger" role="alert">
 				<h2>Error processing</h2>

@@ -229,7 +229,33 @@ module.exports = async function (app) {
     await addRepo(context, payload.repository)
   })
 
-  // app.on('star', async context => {
-  //   // github permissions is down so can't test
-  // })
+var updateRepoInfo = async function (context, repo) {
+  const owner = repo.full_name.split('/')[0]
+    const name = repo.full_name.split('/')[1]
+
+    const info = await context.github.repos.get({ owner, repo: name })
+
+    const _package = await db.Package.findOne({
+        where: { github_id: repo.id },
+      })
+    if (_package) {
+      _package.info = info;
+      _package.save()
+    }
+}
+
+  app.on('star', async context => {
+    const payload = context.payload;
+
+    if (!payload) { return }
+
+    if (!payload.repository) { return }
+
+    if (payload.repository.private) {
+      return
+    }
+    const repo = payload.repository;
+
+    updateRepoInfo(context, repo)
+  })
 }
