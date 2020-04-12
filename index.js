@@ -229,23 +229,23 @@ module.exports = async function (app) {
     await addRepo(context, payload.repository)
   })
 
-var updateRepoInfo = async function (context, repo) {
-  const owner = repo.full_name.split('/')[0]
+  var updateRepoInfo = async function (context, repo) {
+    const owner = repo.full_name.split('/')[0]
     const name = repo.full_name.split('/')[1]
 
     const info = await context.github.repos.get({ owner, repo: name })
 
     const _package = await db.Package.findOne({
-        where: { github_id: repo.id },
-      })
+      where: { github_id: repo.id }
+    })
     if (_package) {
-      _package.info = info;
+      _package.info = info
       _package.save()
     }
-}
+  }
 
   app.on('star', async context => {
-    const payload = context.payload;
+    const payload = context.payload
 
     if (!payload) { return }
 
@@ -254,7 +254,7 @@ var updateRepoInfo = async function (context, repo) {
     if (payload.repository.private) {
       return
     }
-    const repo = payload.repository;
+    const repo = payload.repository
 
     updateRepoInfo(context, repo)
   })
