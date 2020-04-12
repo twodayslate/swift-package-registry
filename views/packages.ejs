@@ -15,7 +15,13 @@
 		<tbody>
 	  <% packages.forEach(function(package){ %>
 		<tr>
-			<td><a href="/<%= package.info.full_name %>"><%= package.info.name %></a></td>
+			<td><a href="/<%= package.info.full_name %>">
+				<% if (package.description) { %>
+					<%= package.description.name %>
+				<% } else { %>
+					<%= package.info.name %>
+				<% } %>
+			</a></td>
 
 			<td><%= package.info.description %></td>
 		</tr>
