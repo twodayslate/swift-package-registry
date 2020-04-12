@@ -31,7 +31,13 @@
 				<div class="row">
 					<div class="col">
 						<div class="d-flex">
-							<h2 class="align-self-baseline"><%= package.info.name %></h2>
+							<h2 class="align-self-baseline">
+								<% if (package.description) { %>
+									<%= package.description.name %>
+								<% } else { %>
+									<%= package.info.name %>
+								<% } %>
+							</h2>
 
 							<% var release = package.info.default_branch %>
 							<% if (package.latest_release) { release = package.latest_release.tag_name.replace('v','')} %>
