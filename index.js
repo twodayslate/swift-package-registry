@@ -135,6 +135,8 @@ module.exports = async function (app) {
     if (pkg) {
       const info = await context.github.repos.get({ owner, repo: name })
 
+      if (!info) { return }
+
       const [_package] = await db.Package.findOrCreate({
         where: { github_id: repo.id },
         defaults: {
@@ -234,6 +236,8 @@ module.exports = async function (app) {
     const name = repo.full_name.split('/')[1]
 
     const info = await context.github.repos.get({ owner, repo: name })
+
+    if (!info) { return }
 
     const _package = await db.Package.findOne({
       where: { github_id: repo.id }
