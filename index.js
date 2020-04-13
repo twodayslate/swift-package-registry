@@ -133,9 +133,9 @@ module.exports = async function (app) {
     } catch (err) { return }
 
     if (pkg) {
-      const info = await context.github.repos.get({ owner, repo: name })
+      const {data: info} = await context.github.repos.get({ owner, repo: name })
 
-      if (!info && !info.data) { return }
+      if (!info) { return }
 
       const [_package] = await db.Package.findOrCreate({
         where: { github_id: repo.id },
@@ -145,7 +145,7 @@ module.exports = async function (app) {
         }
       })
 
-      _package.info = info.data
+      _package.info = info
       _package.is_installed = true
       _package.save()
 
@@ -217,7 +217,7 @@ module.exports = async function (app) {
     }
   })
 
-  app.on('release', async context => {
+  app.on(['release', 'public', 'created'], async context => {
     const payload = context.payload
     console.log(context.payload)
     if (!payload) {
@@ -235,21 +235,20 @@ module.exports = async function (app) {
     const owner = repo.full_name.split('/')[0]
     const name = repo.full_name.split('/')[1]
 
-    const info = await context.github.repos.get({ owner, repo: name })
+    const {data: info} = await context.github.repos.get({ owner, repo: name })
 
-    if (!info && !info.data) { return }
+    if(!info) { return }
 
     const _package = await db.Package.findOne({
       where: { github_id: repo.id }
     })
     if (_package) {
-      console.log(info.data)
-      _package.info = info.data
+      _package.info = info
       _package.save()
     }
   }
 
-  app.on('star', async context => {
+  app.on(['star', 'repository'], async context => {
     const payload = context.payload
 
     if (!payload) { return }
