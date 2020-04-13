@@ -135,7 +135,7 @@ module.exports = async function (app) {
     if (pkg) {
       const info = await context.github.repos.get({ owner, repo: name })
 
-      if (!info) { return }
+      if (!info && !info.data) { return }
 
       const [_package] = await db.Package.findOrCreate({
         where: { github_id: repo.id },
@@ -145,7 +145,7 @@ module.exports = async function (app) {
         }
       })
 
-      _package.info = info
+      _package.info = info.data
       _package.is_installed = true
       _package.save()
 
@@ -237,13 +237,14 @@ module.exports = async function (app) {
 
     const info = await context.github.repos.get({ owner, repo: name })
 
-    if (!info) { return }
+    if (!info && !info.data) { return }
 
     const _package = await db.Package.findOne({
       where: { github_id: repo.id }
     })
     if (_package) {
-      _package.info = info
+      console.log(info.data)
+      _package.info = info.data
       _package.save()
     }
   }
