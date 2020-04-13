@@ -133,7 +133,7 @@ module.exports = async function (app) {
     } catch (err) { return }
 
     if (pkg) {
-      const {data: info} = await context.github.repos.get({ owner, repo: name })
+      const { data: info } = await context.github.repos.get({ owner, repo: name })
 
       if (!info) { return }
 
@@ -235,9 +235,9 @@ module.exports = async function (app) {
     const owner = repo.full_name.split('/')[0]
     const name = repo.full_name.split('/')[1]
 
-    const {data: info} = await context.github.repos.get({ owner, repo: name })
+    const { data: info } = await context.github.repos.get({ owner, repo: name })
 
-    if(!info) { return }
+    if (!info) { return }
 
     const _package = await db.Package.findOne({
       where: { github_id: repo.id }
