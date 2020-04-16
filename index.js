@@ -95,10 +95,6 @@ module.exports = async function (app) {
 
   app.router.use(expressApp)
 
-  app.on('release.published', async context => {
-    app.log('A release was published', context)
-  })
-
   var removeIsInstall = function (repo) {
     db.Package.findOne({
       where: {
@@ -177,9 +173,8 @@ module.exports = async function (app) {
 
   app.on('integration_installation', async context => {
     const payload = context.payload
-    app.log('An integration_installation was', payload.action)
 
-    console.log('installation_id', context.payload.installation.id)
+    //console.log('installation_id', context.payload.installation.id)
     // const { authed} = await context.github.auth({installationId: context.payload.installation.id})
     // console.log('authed', authed)
     try {
