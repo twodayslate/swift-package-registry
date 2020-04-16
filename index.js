@@ -115,8 +115,8 @@ module.exports = async function (app) {
 
     var latestRelease
     try {
-      var { data } = await context.github.repos.getLatestRelease({ owner, repo: name })
-      latestRelease = data
+      var { data: lr } = await context.github.repos.getLatestRelease({ owner, repo: name })
+      latestRelease = lr
     } catch (err) {}
 
     var ref = 'master'
@@ -126,7 +126,7 @@ module.exports = async function (app) {
 
     var pkg
     try {
-      var { data }= await context.github.repos.getContents({ owner, repo: name, path: 'Package.swift', ref })
+      var { data } = await context.github.repos.getContents({ owner, repo: name, path: 'Package.swift', ref })
       pkg = data
     } catch (err) { return }
 
@@ -174,28 +174,14 @@ module.exports = async function (app) {
   app.on('integration_installation', async context => {
     const payload = context.payload
 
-    //console.log('installation_id', context.payload.installation.id)
-    // const { authed} = await context.github.auth({installationId: context.payload.installation.id})
-    // console.log('authed', authed)
-    try {
-      const { user } = await context.github.users.getAuthenticated()
-      app.log('user', user)
-    } catch (err) {
-      app.log({ err })
-    }
-
-    try {
-      const { data } = await context.github.apps.listInstallations()
-      app.log(data)
-    } catch (err) {
-      app.log({ err })
-    }
-
-    try {
-      const { repos } = await context.github.repos.list()
-      app.log(repos)
-    } catch (err) {
-      app.log({ err })
+    if (payload.action === 'created' || payload.action === 'edited') {
+      payload.repositories.forEach(async function (repo) {
+        addRepo(context, repo)
+      })
+    } else if (payload.action === 'deleted') {
+      payload.repositories.forEach(async function (repo) {
+        removeIsInstall(repo)
+      })
     }
   })
 
