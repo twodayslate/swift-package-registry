@@ -119,7 +119,8 @@ module.exports = async function (app) {
 
     var latestRelease
     try {
-      latestRelease = await context.github.repos.getLatestRelease({ owner, repo: name })
+      var { data } = await context.github.repos.getLatestRelease({ owner, repo: name })
+      latestRelease = data
     } catch (err) {}
 
     var ref = 'master'
@@ -129,7 +130,8 @@ module.exports = async function (app) {
 
     var pkg
     try {
-      pkg = await context.github.repos.getContents({ owner, repo: name, path: 'Package.swift', ref })
+      var { data }= await context.github.repos.getContents({ owner, repo: name, path: 'Package.swift', ref })
+      pkg = data
     } catch (err) { return }
 
     if (pkg) {
