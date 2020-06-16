@@ -8,7 +8,7 @@ The [Swift Package Registry](https://swiftpackageregistry.com/) is a collection 
 
 This [GitHub App](https://developer.github.com/apps/about-apps/) is a [Node.js](https://nodejs.org/en/) application built with [Probot](https://github.com/probot/probot). It parses all Swift packages using [Docker](https://github.com/apocas/dockerode). You can help contribue to this project by visiting the [GitHub page](https://github.com/twodayslate/swift-package-registry/). Issues and pull requests are welcomed!
 
-Only public reposistories are supported. When adding packages manually, a personal access token is used to fetch information about the package. 
+Only public repositories are supported. When adding packages manually, a personal access token is used to fetch information about the package. 
 
 Docker is used to help validate packages. Just parsing <samp>Package.swift</samp> is not always enough. It is also an additional check for Swift version compatability.
 
