@@ -31,6 +31,7 @@
 			<div class="alert alert-danger" role="alert">
 				<h2>Error processing</h2>
 				<pre><%= package.error %></pre>
+				This package can be updated automatically by having the owner add the <a href="<%=whoami.html_url %>">GitHub App</a> to this repository and creating a new release.
 			</div>
 		<% } %>
 		<% if (package.info && package.info.fork) { %>
