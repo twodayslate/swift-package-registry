@@ -171,20 +171,6 @@ module.exports = async function (app) {
     }
   })
 
-  app.on('integration_installation', async context => {
-    const payload = context.payload
-
-    if (payload.action === 'created' || payload.action === 'edited') {
-      payload.repositories.forEach(async function (repo) {
-        addRepo(context, repo)
-      })
-    } else if (payload.action === 'deleted') {
-      payload.repositories.forEach(async function (repo) {
-        removeIsInstall(repo)
-      })
-    }
-  })
-
   app.on('installation_repositories', async context => {
     const payload = context.payload
     if (!payload) { return }
