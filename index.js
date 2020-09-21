@@ -16,8 +16,16 @@ module.exports = async function (app) {
   app.log('Yay, the app was loaded!')
 
   const db = require('./models')
-  await db.sequelize.authenticate()
+  try {
+  await db.sequelize.authenticate();
+  app.log('Connection has been established successfully.');
+} catch (error) {
+  app.log('Unable to connect to the database:', error);
+  console.log(error)
+} 
+  app.log("authenticated")
   await db.sequelize.sync({ alter: true })
+  app.log("synced")
 
   if (process.env.REPROCESS_ALL === 'True') {
     app.log('Reporecessing all packages')
@@ -68,7 +76,6 @@ module.exports = async function (app) {
 
   oauth(expressApp)
   require('./lib/index')(expressApp)
-  require('./lib/account')(expressApp)
   require('./lib/about')(expressApp)
   require('./lib/add')(expressApp)
   require('./lib/package')(expressApp)
