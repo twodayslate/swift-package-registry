@@ -1,0 +1,16 @@
+name: 'Swift Package Registry'
+description: 'Add your repository to the Swift Package Registry'
+author: 'twodayslate'
+branding:
+  icon: arrow-right-circle
+  color: gray-dark
+inputs:
+  url:
+    description: 'Web request URL endpoint'
+    required: false
+outputs:
+  output:
+    description: 'data output from the web request'
+runs:
+  using: 'node12'
+  main: 'action/index.js'

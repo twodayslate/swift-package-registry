@@ -30,6 +30,12 @@ Setup <samp>.env</samp>
 npm start
 ```
 
+*GitHub Action*
+
+```sh
+ncc build -o action action.js 
+```
+
 ### Contributing
 
 If you have suggestions for how Swift Package Registry could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
