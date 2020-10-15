@@ -17,15 +17,15 @@ module.exports = async function (app) {
 
   const db = require('./models')
   try {
-  await db.sequelize.authenticate();
-  app.log('Connection has been established successfully.');
-} catch (error) {
-  app.log('Unable to connect to the database:', error);
-  console.log(error)
-} 
-  app.log("authenticated")
+    await db.sequelize.authenticate()
+    app.log('Connection has been established successfully.')
+  } catch (error) {
+    app.log('Unable to connect to the database:', error)
+    console.log(error)
+  }
+  app.log('authenticated')
   await db.sequelize.sync({ alter: true })
-  app.log("synced")
+  app.log('synced')
 
   if (process.env.REPROCESS_ALL === 'True') {
     app.log('Reporecessing all packages')
@@ -82,6 +82,8 @@ module.exports = async function (app) {
   require('./lib/search')(expressApp)
   require('./lib/mod')(expressApp)
   require('./lib/delete')(expressApp)
+  require('./lib/api/all')(expressApp)
+  require('./lib/api/package')(expressApp)
 
   expressApp.get('/all', async function (req, res) {
     db.Package.findAll({
