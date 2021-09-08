@@ -84,21 +84,15 @@ module.exports = async function (app) {
   require('./lib/mod')(expressApp)
   require('./lib/delete')(expressApp)
   require('./lib/api/package')(expressApp)
+  require('./lib/api/all')(expressApp)
   require('./lib/api/username')(expressApp)
   require('./lib/userAllPackage')(expressApp)
-
-
 
   expressApp.get('/whoami', async function (req, res) {
     const octokit = await app.auth()
     const { data } = await octokit.apps.getAuthenticated()
     res.json(data)
   })
-
-
-
-
-
 
   app.router.use(expressApp)
 
