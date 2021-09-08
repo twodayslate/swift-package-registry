@@ -39,6 +39,8 @@ module.exports = (sequelize, DataTypes) => {
       // This way, the current date/time will be used to populate this column (at the moment of insertion)
     }
   }, {})
+
+  
   Package.associate = function (models) {
     // associations can be defined here
   }

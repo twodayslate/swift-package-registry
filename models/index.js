@@ -6,7 +6,7 @@ const Sequelize = require('sequelize')
 const basename = path.basename(__filename)
 const db = {}
 
-const sequelize = new Sequelize(process.env.POSTGRESQL_SERVER || 'postgres://localhost:5432/spr')
+const sequelize = new Sequelize(process.env.POSTGRESQL_SERVER || 'postgres://postgres:postgres@localhost:5432/spr')
 
 fs
   .readdirSync(__dirname)

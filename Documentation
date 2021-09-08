@@ -1,0 +1,31 @@
+Docker Setup:-
+systemctl start docker
+
+Postgresslq Setup:-
+sudo su - postgres
+psql
+
+
+Setup .env:-
+manually setup:
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+UUID_NAMESPACE='1b671a64-40d5-491e-99b0-da01ff1f3341
+
+
+
+In GitHUP APPs:-
+set callback URL
+
+
+
+Not sure:-
+if you are getting this error in linux then (onnect EACCES /var/run/docker.sock)
+https://www.davidhayden.me/blog/fix-docker-vs-code-error-connect-eacces-var-run-docker-sock
+
+
+
+To Avoid Rate Limit:
+GITHUB_PERSONAL_ACCESS_TOKEN=
+
+use the above in .env
