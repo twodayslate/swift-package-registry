@@ -2,7 +2,7 @@ const express = require('express')
 const session = require('express-session')
 const partials = require('express-partials')
 const oauth = require('./lib/oauth')
-var bodyParser = require('body-parser')
+var   bodyParser = require('body-parser')
 const { Octokit } = require('@octokit/rest')
 const { parsePackageContext } = require('./lib/process')
 const path = require('path')
@@ -78,23 +78,15 @@ module.exports = async function (app) {
   require('./lib/index')(expressApp)
   require('./lib/about')(expressApp)
   require('./lib/add')(expressApp)
+  require('./lib/all')(expressApp)
   require('./lib/package')(expressApp)
   require('./lib/search')(expressApp)
   require('./lib/mod')(expressApp)
   require('./lib/delete')(expressApp)
-  require('./lib/api/all')(expressApp)
   require('./lib/api/package')(expressApp)
-
-  expressApp.get('/all', async function (req, res) {
-    db.Package.findAll({
-      where: {
-        processing: false
-      }
-    }).then(function (packages) {
-      req.robot.log('user', req.user)
-      res.render('packages', { title: 'All', heading: 'All Swift Packages', packages: packages })
-    })
-  })
+  require('./lib/api/all')(expressApp)
+  require('./lib/api/username')(expressApp)
+  require('./lib/userAllPackage')(expressApp)
 
   expressApp.get('/whoami', async function (req, res) {
     const octokit = await app.auth()
