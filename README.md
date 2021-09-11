@@ -23,12 +23,7 @@ You can access the [Swift Package Registry](https://swiftpackageregistry.com/) v
 npm install
 ```
 
-Setup <samp>.env</samp>
-
-If running locally you can start postgresql with docker:
-```sh
-docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=spr -d -p 5432:5432 postgres
-```
+Setup <samp>.env</samp>. You can use <samp>.env.exmaple</samp> as a base.
 
 #### Run the bot
 ```
