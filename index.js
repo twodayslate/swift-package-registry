@@ -2,7 +2,7 @@ const express = require('express')
 const session = require('express-session')
 const partials = require('express-partials')
 const oauth = require('./lib/oauth')
-var   bodyParser = require('body-parser')
+const bodyParser = require('body-parser')
 const { Octokit } = require('@octokit/rest')
 const { parsePackageContext } = require('./lib/process')
 const path = require('path')
@@ -11,7 +11,7 @@ const path = require('path')
  * This is the main entrypoint to your Probot app
  * @param {import('probot').Application} app
  */
-module.exports = async function (app) {
+module.exports = async function (app, { getRouter }) {
   // Your code here
   app.log('Yay, the app was loaded!')
 
@@ -95,9 +95,9 @@ module.exports = async function (app) {
 
   require('./lib/userAllPackage')(expressApp)
 
-  app.router.use(expressApp)
+  getRouter(expressApp)
 
-  var removeIsInstall = function (repo) {
+  const removeIsInstall = function (repo) {
     db.Package.findOne({
       where: {
         github_id: repo.id
@@ -108,27 +108,27 @@ module.exports = async function (app) {
     }).catch(() => {})
   }
 
-  var addRepo = async function (context, repo) {
+  const addRepo = async function (context, repo) {
     if (repo.private) {
       return
     }
     const owner = repo.full_name.split('/')[0]
     const name = repo.full_name.split('/')[1]
 
-    var latestRelease
+    let latestRelease
     try {
-      var { data: lr } = await context.github.repos.getLatestRelease({ owner, repo: name })
+      const { data: lr } = await context.github.repos.getLatestRelease({ owner, repo: name })
       latestRelease = lr
     } catch (err) {}
 
-    var ref = 'master'
+    let ref = 'master'
     if (latestRelease) {
       ref = latestRelease.tag_name
     }
 
-    var pkg
+    let pkg
     try {
-      var { data } = await context.github.repos.getContents({ owner, repo: name, path: 'Package.swift', ref })
+      const { data } = await context.github.repos.getContents({ owner, repo: name, path: 'Package.swift', ref })
       pkg = data
     } catch (err) { return }
 
@@ -202,7 +202,7 @@ module.exports = async function (app) {
     await addRepo(context, payload.repository)
   })
 
-  var updateRepoInfo = async function (context, repo) {
+  const updateRepoInfo = async function (context, repo) {
     const owner = repo.full_name.split('/')[0]
     const name = repo.full_name.split('/')[1]
 
