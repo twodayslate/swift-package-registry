@@ -36,6 +36,8 @@ npm start
 ncc build -o action action.js 
 ```
 
+For locally testing Swift Package Collections you will need to be using TLS/SSL. This can be achieved with the `https-localhost` npm package and manually modifying probot to use that over it's regular express web server.
+
 ### Contributing
 
 If you have suggestions for how Swift Package Registry could be improved, or want to report a bug, open an issue! We'd love all and any contributions.

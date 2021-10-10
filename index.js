@@ -2,10 +2,11 @@ const express = require('express')
 const session = require('express-session')
 const partials = require('express-partials')
 const oauth = require('./lib/oauth')
-var   bodyParser = require('body-parser')
+const bodyParser = require('body-parser')
 const { Octokit } = require('@octokit/rest')
 const { parsePackageContext } = require('./lib/process')
 const path = require('path')
+const apicache = require('apicache')
 
 /**
  * This is the main entrypoint to your Probot app
@@ -50,6 +51,7 @@ module.exports = async function (app) {
   expressApp.use(require('connect-flash')())
   expressApp.use(bodyParser.urlencoded({ extended: true }))
   expressApp.use(bodyParser.json())
+  expressApp.apicache = apicache.middleware
 
   expressApp.use(async (req, res, next) => {
     console.log('setting robot', req.url)
@@ -79,6 +81,7 @@ module.exports = async function (app) {
   require('./lib/about')(expressApp)
   require('./lib/add')(expressApp)
   require('./lib/all')(expressApp)
+  require('./lib/api/collection')(expressApp)
   require('./lib/package')(expressApp)
   require('./lib/search')(expressApp)
   require('./lib/mod')(expressApp)
@@ -91,6 +94,22 @@ module.exports = async function (app) {
     const octokit = await app.auth()
     const { data } = await octokit.apps.getAuthenticated()
     res.json(data)
+  })
+
+  expressApp.get("/mod/cache/performance", async function(req, res) {
+    if (!req.user || !req.user.isMod) {
+      res.redirect('/')
+      return
+    }
+    res.json(apicache.getPerformance())
+  })
+
+  expressApp.get("/mod/cache/index", async function(req, res) {
+    if (!req.user || !req.user.isMod) {
+      res.redirect('/')
+      return
+    }
+    res.json(res.json(apicache.getIndex()))
   })
 
   require('./lib/userAllPackage')(expressApp)
