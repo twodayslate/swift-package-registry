@@ -96,7 +96,7 @@ module.exports = async function (app) {
     res.json(data)
   })
 
-  expressApp.get("/mod/cache/performance", async function(req, res) {
+  expressApp.get('/mod/cache/performance', async function (req, res) {
     if (!req.user || !req.user.isMod) {
       res.redirect('/')
       return
@@ -104,7 +104,7 @@ module.exports = async function (app) {
     res.json(apicache.getPerformance())
   })
 
-  expressApp.get("/mod/cache/index", async function(req, res) {
+  expressApp.get('/mod/cache/index', async function (req, res) {
     if (!req.user || !req.user.isMod) {
       res.redirect('/')
       return
