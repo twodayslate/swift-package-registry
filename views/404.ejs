@@ -10,8 +10,8 @@
     </div>
 <% } %>
 
-<% if (noExist){ %>
-    <p><strong><%=noExist %></strong></p>
+<% if (locals.noExist){ %>
+    <p><strong><%= locals.noExist %></strong></p>
 <% } %>
 
 Unable to find <strong><samp><%= req.url %></strong></samp>
