@@ -23,6 +23,7 @@
   "dependencies": {
     "@actions/core": "^1.2.6",
     "@octokit/rest": "^17.11.2",
+    "absolutify": "^0.1.0",
     "apicache": "^1.6.2",
     "async": "^3.2.0",
     "axios": "^0.20.0",
