@@ -32,7 +32,7 @@
     "dateformat": "^4.6.2",
     "dockerode": "^3.2.1",
     "ejs": "^3.1.5",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-partials": "^0.3.0",
     "express-session": "^1.17.1",
     "html-to-text": "^8.0.0",
