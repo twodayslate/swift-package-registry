@@ -38,7 +38,7 @@
     "html-to-text": "^8.0.0",
     "pg": "^8.3.3",
     "pg-hstore": "^2.3.3",
-    "probot": "^10.8.0",
+    "probot": "^12.2.8",
     "require-context": "^1.1.0",
     "semver": "^7.3.5",
     "sequelize": "^6.3.5",
