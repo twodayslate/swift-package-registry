@@ -13,7 +13,7 @@ const apicache = require('apicache')
  * @param {import('probot').Application} app
  */
 module.exports = async (app, { getRouter }) => {
-  const router = getRouter(process.env.APP_NAME);
+  const router = getRouter("/")
   // Your code here
   app.log('Yay, the app was loaded!')
 
