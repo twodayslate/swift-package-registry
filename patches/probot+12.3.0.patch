@@ -1,0 +1,13 @@
+diff --git a/node_modules/probot/lib/apps/default.js b/node_modules/probot/lib/apps/default.js
+index 9157f6f..43c9912 100644
+--- a/node_modules/probot/lib/apps/default.js
++++ b/node_modules/probot/lib/apps/default.js
+@@ -20,7 +20,6 @@ function defaultApp(app, { getRouter }) {
+         }
+         res.render("probot.handlebars", pkg);
+     });
+-    router.get("/", (req, res, next) => res.redirect("/probot"));
+ }
+ exports.defaultApp = defaultApp;
+ //# sourceMappingURL=default.js.map
+\ No newline at end of file
