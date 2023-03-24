@@ -22,16 +22,8 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-  },
-  "devDependencies": {
     "@actions/core": "^1.10.0",
     "@octokit/rest": "^19.0.7",
-    "https-localhost": "^4.7.0",
-    "jest": "^24.9.0",
-    "nock": "^12.0.0",
-    "nodemon": "^2.0.4",
-    "smee-client": "^1.2.2",
-    "standard": "^14.3.4",
     "absolutify": "^0.1.0",
     "apicache": "^1.6.3",
     "async": "^3.2.4",
@@ -53,6 +45,14 @@
     "semver": "^7.3.8",
     "sequelize": "^6.29.1",
     "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "https-localhost": "^4.7.0",
+    "jest": "^24.9.0",
+    "nock": "^12.0.0",
+    "nodemon": "^2.0.4",
+    "smee-client": "^1.2.2",
+    "standard": "^14.3.4"
   },
   "engines": {
     "node": ">= 8.3.0"
