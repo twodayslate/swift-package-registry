@@ -12,7 +12,8 @@ const apicache = require('apicache')
  * This is the main entrypoint to your Probot app
  * @param {import('probot').Application} app
  */
-module.exports = async function (app) {
+module.exports = async (app, { getRouter }) => {
+  const router = getRouter("/")
   // Your code here
   app.log('Yay, the app was loaded!')
 
@@ -114,7 +115,7 @@ module.exports = async function (app) {
 
   require('./lib/userAllPackage')(expressApp)
 
-  app.router.use(expressApp)
+  router.use(expressApp)
 
   var removeIsInstall = function (repo) {
     db.Package.findOne({
@@ -251,5 +252,13 @@ module.exports = async function (app) {
     const repo = payload.repository
 
     updateRepoInfo(context, repo)
+  })
+  app.on("issues.opened", async (context) => {
+    // An issue was just opened.
+    console.log("An issue was just opened.")
+
+    console.log("Issue number:", context.payload.issue.number)
+    console.log("Issue title:", context.payload.issue.title)
+    console.log("Issue body:", context.payload.issue.body)
   })
 }
