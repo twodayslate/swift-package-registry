@@ -22,7 +22,6 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@actions/core": "^1.10.0",
     "@octokit/rest": "^19.0.7",
     "absolutify": "^0.1.0",
     "apicache": "^1.6.3",
@@ -47,6 +46,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@actions/core": "^1.10.0",
     "https-localhost": "^4.7.0",
     "jest": "^24.9.0",
     "nock": "^12.0.0",
