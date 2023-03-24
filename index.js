@@ -253,12 +253,4 @@ module.exports = async (app, { getRouter }) => {
 
     updateRepoInfo(context, repo)
   })
-  app.on("issues.opened", async (context) => {
-    // An issue was just opened.
-    console.log("An issue was just opened.")
-
-    console.log("Issue number:", context.payload.issue.number)
-    console.log("Issue title:", context.payload.issue.title)
-    console.log("Issue body:", context.payload.issue.body)
-  })
 }
