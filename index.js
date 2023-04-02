@@ -7,14 +7,14 @@ const { Octokit } = require('@octokit/rest')
 const { parsePackageContext } = require('./lib/process')
 const path = require('path')
 const apicache = require('apicache')
-const gitCommitInfo = require('git-commit-info');
+const gitCommitInfo = require('git-commit-info')
 
 /**
  * This is the main entrypoint to your Probot app
  * @param {import('probot').Application} app
  */
 module.exports = async (app, { getRouter }) => {
-  const router = getRouter("/")
+  const router = getRouter('/')
   // Your code here
   app.log('Yay, the app was loaded!')
 
@@ -95,7 +95,7 @@ module.exports = async (app, { getRouter }) => {
   expressApp.get('/whoami', async function (req, res) {
     const octokit = await app.auth()
     const { data } = await octokit.apps.getAuthenticated()
-    data["commit"] = gitCommitInfo().commit;
+    data.commit = gitCommitInfo().commit
     res.json(data)
   })
 
