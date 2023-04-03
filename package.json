@@ -41,6 +41,7 @@
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.4",
     "probot": "^12.3.0",
+    "request": "^2.88.2",
     "require-context": "^1.1.0",
     "semver": "^7.3.8",
     "sequelize": "^6.29.1",
