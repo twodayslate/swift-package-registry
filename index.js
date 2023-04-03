@@ -13,7 +13,7 @@ const apicache = require('apicache')
  * @param {import('probot').Application} app
  */
 module.exports = async (app, { getRouter }) => {
-  const router = getRouter("/")
+  const router = getRouter('/')
   // Your code here
   app.log('Yay, the app was loaded!')
 
@@ -94,7 +94,7 @@ module.exports = async (app, { getRouter }) => {
   expressApp.get('/whoami', async function (req, res) {
     const octokit = await app.auth()
     const { data } = await octokit.apps.getAuthenticated()
-    data["version"] = process.env.npm_package_version
+    data.version = process.env.npm_package_version
     res.json(data)
   })
 
