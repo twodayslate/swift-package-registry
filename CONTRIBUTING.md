@@ -1,4 +1,4 @@
-## Contributing
+# Contributing
 
 [fork]: /fork
 [pr]: /compare
@@ -18,7 +18,7 @@ We'd also love PRs. If you're thinking of a large PR, we advise opening up an is
 ## Submitting a pull request
 
 1. [Fork][fork] and clone the repository.
-1. Configure and install the dependencies: `npm install`.
+1. Configure and install the dependencies: `npm ci`.
 1. Make sure the tests pass on your machine: `npm test`, note: these tests also apply the linter, so there's no need to lint separately.
 1. Create a new branch: `git checkout -b my-branch-name`.
 1. Make your change, add tests, and make sure the tests still pass.
