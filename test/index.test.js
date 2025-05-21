@@ -22,7 +22,13 @@ describe('My Probot app', () => {
 
   beforeEach(() => {
     nock.disableNetConnect()
-    probot = new Probot({ id: 123, cert: mockCert })
+    // Fix: Change 'id' to 'appId' to match current Probot API
+    probot = new Probot({
+      appId: 123,
+      privateKey: mockCert
+      // Depending on your Probot version, you might also need:
+      // githubToken: 'test'
+    })
     // Load our app into probot
     probot.load(myProbotApp)
   })

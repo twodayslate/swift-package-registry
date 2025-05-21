@@ -12,8 +12,10 @@ const apicache = require('apicache')
  * This is the main entrypoint to your Probot app
  * @param {import('probot').Application} app
  */
-module.exports = async (app, { getRouter }) => {
-  const router = getRouter("/")
+module.exports = async (app, options = {}) => {
+  // Create a router even if getRouter isn't provided (for tests)
+  const router = options.getRouter ? options.getRouter('/') : express.Router()
+
   // Your code here
   app.log('Yay, the app was loaded!')
 
@@ -31,15 +33,20 @@ module.exports = async (app, { getRouter }) => {
 
   if (process.env.REPROCESS_ALL === 'True') {
     app.log('Reporecessing all packages')
-    db.Package.update({
-      processing: true
-    }, {
-      where: {}
-    }).then(function (rows) {
-      console.log('modified', rows)
-    }).catch(function (err) {
-      console.log('caught an error', err)
-    })
+    db.Package.update(
+      {
+        processing: true
+      },
+      {
+        where: {}
+      }
+    )
+      .then(function (rows) {
+        console.log('modified', rows)
+      })
+      .catch(function (err) {
+        console.log('caught an error', err)
+      })
   }
 
   const expressApp = express()
@@ -47,7 +54,9 @@ module.exports = async (app, { getRouter }) => {
   expressApp.db = db
   expressApp.set('views', path.join(__dirname, 'views'))
   expressApp.set('view engine', 'ejs')
-  expressApp.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: true }))
+  expressApp.use(
+    session({ secret: 'keyboard cat', resave: false, saveUninitialized: true })
+  )
   expressApp.use(partials())
   expressApp.use(require('connect-flash')())
   expressApp.use(bodyParser.urlencoded({ extended: true }))
@@ -72,7 +81,9 @@ module.exports = async (app, { getRouter }) => {
     res.locals.req = req
     res.locals.flash = req.flash()
 
-    res.locals.packageCount = await db.Package.count({ where: { processing: false, error: null } })
+    res.locals.packageCount = await db.Package.count({
+      where: { processing: false, error: null }
+    })
 
     next()
   })
@@ -122,10 +133,12 @@ module.exports = async (app, { getRouter }) => {
       where: {
         github_id: repo.id
       }
-    }).then(function (_package) {
-      _package.is_installed = false
-      _package.save()
-    }).catch(() => {})
+    })
+      .then(function (_package) {
+        _package.is_installed = false
+        _package.save()
+      })
+      .catch(() => {})
   }
 
   var addRepo = async function (context, repo) {
@@ -137,7 +150,10 @@ module.exports = async (app, { getRouter }) => {
 
     var latestRelease
     try {
-      var { data: lr } = await context.github.repos.getLatestRelease({ owner, repo: name })
+      var { data: lr } = await context.github.repos.getLatestRelease({
+        owner,
+        repo: name
+      })
       latestRelease = lr
     } catch (err) {}
 
@@ -148,14 +164,26 @@ module.exports = async (app, { getRouter }) => {
 
     var pkg
     try {
-      var { data } = await context.github.repos.getContents({ owner, repo: name, path: 'Package.swift', ref })
+      var { data } = await context.github.repos.getContents({
+        owner,
+        repo: name,
+        path: 'Package.swift',
+        ref
+      })
       pkg = data
-    } catch (err) { return }
+    } catch (err) {
+      return
+    }
 
     if (pkg) {
-      const { data: info } = await context.github.repos.get({ owner, repo: name })
+      const { data: info } = await context.github.repos.get({
+        owner,
+        repo: name
+      })
 
-      if (!info) { return }
+      if (!info) {
+        return
+      }
 
       const [_package] = await db.Package.findOrCreate({
         where: { github_id: repo.id },
@@ -173,7 +201,7 @@ module.exports = async (app, { getRouter }) => {
     }
   }
 
-  app.on('installation', async context => {
+  app.on('installation', async (context) => {
     const payload = context.payload
     app.log('An installation was ', payload.action)
 
@@ -193,9 +221,11 @@ module.exports = async (app, { getRouter }) => {
     }
   })
 
-  app.on('installation_repositories', async context => {
+  app.on('installation_repositories', async (context) => {
     const payload = context.payload
-    if (!payload) { return }
+    if (!payload) {
+      return
+    }
     if (payload.repositories_added) {
       payload.repositories_added.forEach(function (repo) {
         addRepo(context, repo)
@@ -208,7 +238,7 @@ module.exports = async (app, { getRouter }) => {
     }
   })
 
-  app.on(['release', 'public', 'created'], async context => {
+  app.on(['release', 'public', 'created'], async (context) => {
     const payload = context.payload
     console.log(context.payload)
     if (!payload) {
@@ -226,9 +256,14 @@ module.exports = async (app, { getRouter }) => {
     const owner = repo.full_name.split('/')[0]
     const name = repo.full_name.split('/')[1]
 
-    const { data: info } = await context.github.repos.get({ owner, repo: name })
+    const { data: info } = await context.github.repos.get({
+      owner,
+      repo: name
+    })
 
-    if (!info) { return }
+    if (!info) {
+      return
+    }
 
     const _package = await db.Package.findOne({
       where: { github_id: repo.id }
@@ -239,12 +274,16 @@ module.exports = async (app, { getRouter }) => {
     }
   }
 
-  app.on(['star', 'repository'], async context => {
+  app.on(['star', 'repository'], async (context) => {
     const payload = context.payload
 
-    if (!payload) { return }
+    if (!payload) {
+      return
+    }
 
-    if (!payload.repository) { return }
+    if (!payload.repository) {
+      return
+    }
 
     if (payload.repository.private) {
       return
