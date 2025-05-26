@@ -105,7 +105,11 @@ module.exports = async (app, options = {}) => {
   expressApp.get('/whoami', async function (req, res) {
     const octokit = await app.auth()
     const { data } = await octokit.apps.getAuthenticated()
-    res.json(data)
+    const response = data
+    response.process = { version: process.version }
+    const { version } = require('./package.json')
+    response.version = version
+    res.json(response)
   })
 
   expressApp.get('/mod/cache/performance', async function (req, res) {
