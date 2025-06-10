@@ -19,6 +19,13 @@ You can access the [Swift Package Registry](https://swiftpackageregistry.com/) v
 ### Setup
 
 #### Install dependencies
+
+The node version used is defined. Set it using: 
+```sh
+nvm use
+```
+
+Then install the dependencies:
 ```sh
 npm install
 ```

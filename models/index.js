@@ -6,7 +6,19 @@ const Sequelize = require('sequelize')
 const basename = path.basename(__filename)
 const db = {}
 
-const sequelize = new Sequelize(process.env.POSTGRESQL_SERVER || 'postgres://localhost:5432/spr')
+// Use different database configurations based on environment
+let sequelize
+if (process.env.NODE_ENV === 'test') {
+  // Use in-memory SQLite for tests
+  sequelize = new Sequelize({
+    dialect: 'sqlite',
+    logging: false, // Disable SQL logging in tests
+    storage: ':memory:'
+  })
+} else {
+  // Use PostgreSQL for development/production
+  sequelize = new Sequelize(process.env.POSTGRESQL_SERVER || 'postgres://localhost:5432/spr')
+}
 
 fs
   .readdirSync(__dirname)

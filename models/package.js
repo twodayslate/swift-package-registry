@@ -11,7 +11,10 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     latest_release: DataTypes.JSONB,
-    topics: DataTypes.ARRAY(DataTypes.STRING),
+    topics: {
+      type: sequelize.getDialect() === 'postgres' ? DataTypes.ARRAY(DataTypes.STRING) : DataTypes.JSON,
+      defaultValue: []
+    },
     processing: {
       type: DataTypes.BOOLEAN,
       defaultValue: true

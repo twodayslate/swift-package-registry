@@ -1,6 +1,7 @@
 const express = require('express')
 const session = require('express-session')
 const partials = require('express-partials')
+const flash = require('connect-flash')
 const oauth = require('./lib/oauth')
 const bodyParser = require('body-parser')
 const { Octokit } = require('@octokit/rest')
@@ -25,7 +26,6 @@ module.exports = async (app, options = {}) => {
     app.log('Connection has been established successfully.')
   } catch (error) {
     app.log('Unable to connect to the database:', error)
-    console.log(error)
   }
   app.log('authenticated')
   await db.sequelize.sync({ alter: true })
@@ -42,10 +42,10 @@ module.exports = async (app, options = {}) => {
       }
     )
       .then(function (rows) {
-        console.log('modified', rows)
+        app.log('modified', rows)
       })
       .catch(function (err) {
-        console.log('caught an error', err)
+        app.log('caught an error', err)
       })
   }
 
@@ -58,13 +58,13 @@ module.exports = async (app, options = {}) => {
     session({ secret: 'keyboard cat', resave: false, saveUninitialized: true })
   )
   expressApp.use(partials())
-  expressApp.use(require('connect-flash')())
+  expressApp.use(flash())
   expressApp.use(bodyParser.urlencoded({ extended: true }))
   expressApp.use(bodyParser.json())
   expressApp.apicache = apicache.middleware
 
   expressApp.use(async (req, res, next) => {
-    console.log('setting robot', req.url)
+    app.log('setting robot', req.url)
     req.robot = app
 
     const personalAccess = new Octokit({
@@ -209,8 +209,6 @@ module.exports = async (app, options = {}) => {
     const payload = context.payload
     app.log('An installation was ', payload.action)
 
-    // console.log(context)
-
     const jwt = app.app.getSignedJsonWebToken()
     context.log('jwt', jwt)
 
@@ -244,7 +242,7 @@ module.exports = async (app, options = {}) => {
 
   app.on(['release', 'public', 'created'], async (context) => {
     const payload = context.payload
-    console.log(context.payload)
+    app.log(context.payload)
     if (!payload) {
       return
     }

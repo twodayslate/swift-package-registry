@@ -17,7 +17,7 @@
     "dev": "nodemon",
     "start": "probot run ./index.js",
     "lint": "standard --fix",
-    "test": "jest && standard",
+    "test": "NODE_ENV=test jest && standard",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage",
     "postinstall": "patch-package"
   },
@@ -52,6 +52,7 @@
     "nock": "^12.0.0",
     "nodemon": "^2.0.4",
     "smee-client": "^1.2.2",
+    "sqlite3": "^5.1.7",
     "standard": "^14.3.4"
   },
   "engines": {
@@ -71,8 +72,5 @@
       ".env",
       "."
     ]
-  },
-  "jest": {
-    "testEnvironment": "node"
   }
 }
