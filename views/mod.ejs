@@ -38,7 +38,15 @@
 	  </tbody>
 	</table>
 
-	<h2>All Swift Packages</h2>
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<h2>All Swift Packages</h2>
+		<div class="btn-group" role="group" aria-label="Package filters">
+			<a href="/mod?filter=all" class="btn <%= (locals.current_filter === 'all' || !locals.current_filter) ? 'btn-primary' : 'btn-outline-primary' %>">All</a>
+			<a href="/mod?filter=errors" class="btn <%= locals.current_filter === 'errors' ? 'btn-danger' : 'btn-outline-danger' %>">Errors Only</a>
+			<a href="/mod?filter=no-errors" class="btn <%= locals.current_filter === 'no-errors' ? 'btn-success' : 'btn-outline-success' %>">No Errors</a>
+		</div>
+	</div>
+
 	<table class="table table-responsive table-striped table-hover">
 		<thead class="thead-dark">
 			<tr>
@@ -54,11 +62,11 @@
 		</thead>
 		<tbody>
 	  <% all_packages.forEach(function(package){ %>
-		<tr>
+		<tr<% if(package.error) { %> class="table-warning"<% } %>>
 			<td><%= package.id %></td>
 			<td><% if(package.info) { %><a href="/<%= package.info.full_name %>"><%= package.info.full_name %></a><% } else { %><%= package.full_name %><% } %></td>
 			<td><% if(package.info) { %><%= package.info.description %><% } %></td>
-			<td><%= package.error %></td>
+			<td><% if(package.error) { %><span class="text-danger"><%= package.error %></span><% } %></td>
 			<td>
 				<form action="/add" method="POST">
 				<% if(package.info) { %>
