@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@actions/core": "1.11.1",
-    "@octokit/rest": "^19.0.7",
+    "@octokit/rest": "^22.0.0",
     "absolutify": "^0.1.0",
     "apicache": "^1.6.3",
     "async": "3.2.6",
@@ -40,7 +40,7 @@
     "patch-package": "^6.5.1",
     "pg": "8.16.0",
     "pg-hstore": "^2.3.4",
-    "probot": "^12.3.0",
+    "probot": "^14.0.2",
     "require-context": "^1.1.0",
     "semver": "7.7.2",
     "sequelize": "6.37.7",
