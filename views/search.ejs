@@ -1,12 +1,13 @@
 <div class="container" id="search">
 <form class="form my-3" action="/search" method="GET">
 	<div class="input-group">
-    <input class="form-control form-control-lg" type="text" placeholder="Search Swift Package Registry" id="term" name="term" value="<%= term %>">
+    <input class="form-control form-control-lg" type="text" placeholder="Search Swift Package Registry (quotes, OR, tag:swiftui)" id="term" name="term" value="<%= term %>">
     <span class="input-group-append">
     	<button type="submit" class="btn btn-primary">Search</button>
     	</span>
     </input>
     </div>
+    <small class="form-text text-muted">Examples: networking cache, "image pipeline", tag:swiftui OR tag:network, -beta</small>
 </form>
 
 <h2>Swift Packages</h2>

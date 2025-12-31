@@ -7,6 +7,7 @@ const payload = require('./fixtures/issues.opened')
 const issueCreatedBody = { body: 'Thanks for opening this issue!' }
 const fs = require('fs')
 const path = require('path')
+const db = require('../models')
 
 describe('My Probot app', () => {
   let probot
@@ -20,7 +21,7 @@ describe('My Probot app', () => {
     })
   })
 
-  beforeEach(() => {
+  beforeEach(async () => {
     nock.disableNetConnect()
     // Fix: Change 'id' to 'appId' to match current Probot API
     probot = new Probot({
@@ -30,7 +31,7 @@ describe('My Probot app', () => {
       // githubToken: 'test'
     })
     // Load our app into probot
-    probot.load(myProbotApp)
+    await probot.load(myProbotApp)
   })
 
   test('creates a comment when an issue is opened', async () => {
@@ -54,6 +55,10 @@ describe('My Probot app', () => {
   afterEach(() => {
     nock.cleanAll()
     nock.enableNetConnect()
+  })
+
+  afterAll(async () => {
+    await db.sequelize.close()
   })
 })
 
