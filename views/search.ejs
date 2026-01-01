@@ -1,13 +1,25 @@
 <div class="container" id="search">
 <form class="form my-3" action="/search" method="GET">
 	<div class="input-group">
-    <input class="form-control form-control-lg" type="text" placeholder="Search Swift Package Registry (quotes, OR, tag:swiftui)" id="term" name="term" value="<%= term %>">
+    <input class="form-control form-control-lg" type="text" placeholder="Search Swift Package Registry" id="term" name="term" value="<%= term %>">
     <span class="input-group-append">
     	<button type="submit" class="btn btn-primary">Search</button>
     	</span>
     </input>
     </div>
-    <small class="form-text text-muted">Examples: networking cache, "image pipeline", tag:swiftui OR tag:network, -beta</small>
+    <details class="mt-2">
+    	<summary class="text-muted">Advanced search examples</summary>
+    	<div class="mt-2 small text-muted">
+    		<ul class="list-unstyled mb-0">
+    			<li><code>networking cache</code> match packages with both terms</li>
+    			<li><code>"image pipeline"</code> exact phrase match</li>
+    			<li><code>tag:swiftui OR topic:network</code> search by topics</li>
+    			<li><code>-beta</code> exclude a term</li>
+    			<li><code>stars:>500</code> minimum star count</li>
+    			<li><code>after:2024-01-01</code> last commit after a date</li>
+    		</ul>
+    	</div>
+    </details>
 </form>
 
 <h2>Swift Packages</h2>
