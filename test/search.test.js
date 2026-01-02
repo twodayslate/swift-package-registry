@@ -6,6 +6,10 @@ const Sequelize = require('sequelize')
 const { parse } = require('@muhgholy/search-query-parser')
 const registerSearch = require('../lib/search')
 
+beforeEach(() => {
+  parse.mockClear()
+})
+
 function buildRouter () {
   const SequelizeModule = Sequelize
   const Package = { findAll: jest.fn().mockResolvedValue([]) }
@@ -34,19 +38,20 @@ test('builds advanced search conditions for multiple terms, tags, and negation',
     { type: 'label', value: 'swiftui', negated: false },
     { type: 'text', value: 'beta', negated: true },
     { type: 'stars', value: '>500', negated: false, size: { op: 'gt', bytes: 500 } },
-    { type: 'after', value: '2024-01-01', negated: false, date: afterDate }
+    { type: 'after', value: '2024-01-01', negated: false, date: afterDate },
+    { type: 'processing', value: 'false', negated: false }
   ])
 
   const { handler, Package, Sequelize, sequelize } = buildRouter()
-  const req = { query: { term: 'networking cache topic:swiftui -beta stars:>500 after:2024-01-01' } }
+  const req = { query: { term: 'networking cache topic:swiftui -beta stars:>500 after:2024-01-01 processing:false' } }
   const res = { render: jest.fn() }
 
   await handler(req, res)
 
   expect(parse).toHaveBeenCalledWith(
-    'networking cache label:swiftui -beta stars:>500 after:2024-01-01',
+    'networking cache label:swiftui -beta stars:>500 after:2024-01-01 processing:false',
     expect.objectContaining({
-      operators: [expect.objectContaining({ name: 'stars' })]
+      operators: expect.arrayContaining([expect.objectContaining({ name: 'stars' })])
     })
   )
   expect(Package.findAll).toHaveBeenCalledTimes(1)
@@ -54,8 +59,7 @@ test('builds advanced search conditions for multiple terms, tags, and negation',
   const where = Package.findAll.mock.calls[0][0].where
   const { Op } = Sequelize
 
-  expect(where.processing).toBe(false)
-  expect(where[Op.and]).toHaveLength(6)
+  expect(where[Op.and]).toHaveLength(7)
 
   const textConditions = where[Op.and].filter((condition) => condition[Op.or])
   expect(textConditions).toHaveLength(2)
@@ -66,6 +70,9 @@ test('builds advanced search conditions for multiple terms, tags, and negation',
 
   const topicCondition = where[Op.and].find((condition) => condition.topics)
   expect(topicCondition.topics[Op.contains]).toEqual(['swiftui'])
+
+  const processingCondition = where[Op.and].find((condition) => condition.processing === false)
+  expect(processingCondition).toBeDefined()
 
   expect(sequelize.where).toHaveBeenCalledWith(
     { cast: { json: 'info.stargazers_count' }, type: 'int' },

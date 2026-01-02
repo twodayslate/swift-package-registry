@@ -20,6 +20,19 @@
     </input>
     </div>
 </form>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var form = document.querySelector('#index form[action="/search"]')
+    if (!form) return
+    form.addEventListener('submit', function () {
+      var input = form.querySelector('input[name="term"]')
+      if (!input) return
+      if (/\berror\s*:/i.test(input.value || '')) return
+      var value = (input.value || '').trim()
+      input.value = value ? (value + ' error:none') : 'error:none'
+    })
+  })
+</script>
 
 <div class="row">
 <div class="col-sm-8">
