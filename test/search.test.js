@@ -61,7 +61,12 @@ test('builds advanced search conditions for multiple terms, tags, and negation',
 
   expect(where[Op.and]).toHaveLength(7)
 
-  const textConditions = where[Op.and].filter((condition) => condition[Op.or])
+  const textConditions = where[Op.and].filter((condition) => {
+    if (!condition[Op.or]) {
+      return false
+    }
+    return condition[Op.or].some((entry) => entry.info || entry['info.description'] || entry['description.name'])
+  })
   expect(textConditions).toHaveLength(2)
 
   const negatedCondition = where[Op.and].find((condition) => condition[Op.not])
@@ -71,8 +76,19 @@ test('builds advanced search conditions for multiple terms, tags, and negation',
   const topicCondition = where[Op.and].find((condition) => condition.topics)
   expect(topicCondition.topics[Op.contains]).toEqual(['swiftui'])
 
-  const processingCondition = where[Op.and].find((condition) => condition.processing === false)
+  const processingCondition = where[Op.and].find((condition) => {
+    if (!condition[Op.or]) {
+      return false
+    }
+    return condition[Op.or].some((entry) => Object.prototype.hasOwnProperty.call(entry, 'processing'))
+  })
   expect(processingCondition).toBeDefined()
+  expect(processingCondition[Op.or]).toEqual(
+    expect.arrayContaining([
+      { processing: false },
+      { processing: null }
+    ])
+  )
 
   expect(sequelize.where).toHaveBeenCalledWith(
     { cast: { json: 'info.stargazers_count' }, type: 'int' },
