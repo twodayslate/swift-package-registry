@@ -32,7 +32,7 @@
     "body-parser": "^1.20.4",
     "connect-flash": "^0.1.1",
     "dateformat": "^4.6.3",
-    "dockerode": "^3.3.4",
+    "dockerode": "^4.0.10",
     "ejs": "3.1.10",
     "express": "^4.22.1",
     "express-partials": "^0.3.0",
