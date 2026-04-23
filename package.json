@@ -45,7 +45,7 @@
     "require-context": "^1.1.0",
     "semver": "7.7.2",
     "sequelize": "6.37.7",
-    "uuid": "^9.0.0"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "https-localhost": "^4.7.0",
