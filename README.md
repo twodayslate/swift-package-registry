@@ -14,6 +14,15 @@ Docker is used to help validate packages. Just parsing <samp>Package.swift</samp
 
 You can access the [Swift Package Registry](https://swiftpackageregistry.com/) via [swiftpackageregistry.com](https://swiftpackageregistry.com/) (main site), [swift-packages.com](https://swift-packages.com), [swiftpkg.dev](https://swiftpkg.dev), [SVVlFT.com](https://svvlft.com), and [swiftdependencies.com](https://swiftdependencies.com).
 
+## Repository denylist
+
+Repositories in `repository-denylist.json` are excluded from ingestion and processing.
+Add an exact `owner/repository` name to the JSON array; matching is case-insensitive.
+
+The denylist applies to manual submissions, package URLs, GitHub events, and
+processing of existing records. Canonical names returned by GitHub are checked too.
+It does not delete existing database records or purge cached/listing data.
+
 ## Development
 
 ### Setup
