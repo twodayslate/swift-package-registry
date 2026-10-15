@@ -34,6 +34,56 @@ npm install
 
 Setup <samp>.env</samp>. You can use <samp>.env.exmaple</samp> as a base.
 
+#### Upgrading repository uniqueness
+
+Packages have a named unique index, `packages_github_id_unique`, on `github_id`.
+This lets concurrent manual submissions, package requests, and GitHub events use
+`findOrCreate` without inserting multiple rows for the same GitHub repository.
+The index is added by the existing startup `sequelize.sync({ alter: true })`.
+It does not prevent multiple workers from processing the same existing row.
+
+Before upgrading an existing database, stop and drain all writers, take a backup,
+and check for duplicate repository IDs:
+
+```sql
+SELECT github_id, COUNT(*), ARRAY_AGG(id ORDER BY id) AS package_ids
+FROM "Packages"
+WHERE github_id IS NOT NULL
+GROUP BY github_id
+HAVING COUNT(*) > 1;
+```
+
+If any groups are returned, do not start the upgraded app yet. Archive the full
+rows and review each group before choosing a survivor and merging useful data
+(including successful processing results and `is_installed`). Preserve the
+survivor's package ID and check for any external references or database foreign
+keys before removing reviewed duplicates. This change intentionally does not
+choose survivors or delete data automatically; unresolved duplicates make index
+creation fail and prevent startup. Nullable legacy IDs are unchanged by this fix.
+
+Once the audit is clear, start the upgraded app to create the index before
+resuming other writers. Verify the following returns one row with both flags true:
+
+```sql
+SELECT i.relname, ix.indisunique, ix.indisvalid
+FROM pg_index ix
+JOIN pg_class i ON i.oid = ix.indexrelid
+WHERE ix.indrelid = '"Packages"'::regclass
+  AND i.relname = 'packages_github_id_unique';
+```
+
+Keep the index if rolling back the application: dropping it reintroduces the race,
+and rolling back code cannot restore any records an operator merged or removed.
+
+#### Tests
+
+Run `npm test` with `POSTGRESQL_SERVER` pointing to a disposable PostgreSQL
+database (the default is `postgres://localhost:5432/spr`). The uniqueness tests
+use two independent clients and an isolated temporary schema to reproduce
+overlapping inserts, check upgrade failure without data loss, and verify repeated
+startup synchronization does not add redundant indexes. The existing app tests
+also synchronize tables in the database's default schema.
+
 #### Run the bot
 ```
 npm start
