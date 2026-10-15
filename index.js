@@ -5,6 +5,7 @@ const oauth = require('./lib/oauth')
 const bodyParser = require('body-parser')
 const { Octokit } = require('@octokit/rest')
 const { parsePackageContext } = require('./lib/process')
+const isRepositoryDenied = require('./lib/repository-denylist')
 const path = require('path')
 const apicache = require('apicache')
 
@@ -146,7 +147,7 @@ module.exports = async (app, options = {}) => {
   }
 
   var addRepo = async function (context, repo) {
-    if (repo.private) {
+    if (repo.private || isRepositoryDenied(repo.full_name)) {
       return
     }
     const owner = repo.full_name.split('/')[0]
@@ -185,7 +186,7 @@ module.exports = async (app, options = {}) => {
         repo: name
       })
 
-      if (!info) {
+      if (!info || isRepositoryDenied(info.full_name)) {
         return
       }
 
@@ -257,6 +258,10 @@ module.exports = async (app, options = {}) => {
   })
 
   var updateRepoInfo = async function (context, repo) {
+    if (isRepositoryDenied(repo.full_name)) {
+      return
+    }
+
     const owner = repo.full_name.split('/')[0]
     const name = repo.full_name.split('/')[1]
 
@@ -265,7 +270,7 @@ module.exports = async (app, options = {}) => {
       repo: name
     })
 
-    if (!info) {
+    if (!info || isRepositoryDenied(info.full_name)) {
       return
     }
 
