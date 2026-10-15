@@ -18,8 +18,6 @@ You can access the [Swift Package Registry](https://swiftpackageregistry.com/) v
 
 Repositories in `repository-denylist.json` are excluded from ingestion and processing.
 Add an exact `owner/repository` name to the JSON array; matching is case-insensitive.
-The list starts with `airovo/rva` (see [#150](https://github.com/twodayslate/swift-package-registry/issues/150)).
-It does not exclude similarly named repositories such as `airovo/rva-swift`.
 
 The denylist applies to manual submissions, package URLs, GitHub events, and
 processing of existing records. Canonical names returned by GitHub are checked too.
