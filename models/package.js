@@ -38,14 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: sequelize.NOW
       // This way, the current date/time will be used to populate this column (at the moment of insertion)
     }
-  }, {
-    indexes: [{
-      // findOrCreate needs database uniqueness to resolve concurrent inserts.
-      name: 'packages_github_id_unique',
-      unique: true,
-      fields: ['github_id']
-    }]
-  })
+  }, {})
   Package.associate = function (models) {
     // associations can be defined here
   }

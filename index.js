@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const { Octokit } = require('@octokit/rest')
 const { parsePackageContext } = require('./lib/process')
 const isRepositoryDenied = require('./lib/repository-denylist')
+const findOrCreatePackage = require('./lib/find-or-create-package')
 const path = require('path')
 const apicache = require('apicache')
 
@@ -190,13 +191,7 @@ module.exports = async (app, options = {}) => {
         return
       }
 
-      const [_package] = await db.Package.findOrCreate({
-        where: { github_id: repo.id },
-        defaults: {
-          github_id: repo.id,
-          info: info
-        }
-      })
+      const [_package] = await findOrCreatePackage(db.Package, repo.id, info)
 
       _package.info = info
       _package.is_installed = true
