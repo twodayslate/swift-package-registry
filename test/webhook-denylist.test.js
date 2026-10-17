@@ -1,3 +1,4 @@
+jest.mock('../lib/initialize-database', () => jest.fn().mockResolvedValue({ backupTable: null }))
 jest.mock('../models', () => ({
   sequelize: { authenticate: jest.fn(), sync: jest.fn() },
   Package: { findOrCreate: jest.fn(), findOne: jest.fn() }

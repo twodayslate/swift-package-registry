@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const { Octokit } = require('@octokit/rest')
 const { parsePackageContext } = require('./lib/process')
 const isRepositoryDenied = require('./lib/repository-denylist')
+const initializeDatabase = require('./lib/initialize-database')
 const path = require('path')
 const apicache = require('apicache')
 
@@ -29,7 +30,10 @@ module.exports = async (app, options = {}) => {
     console.log(error)
   }
   app.log('authenticated')
-  await db.sequelize.sync({ alter: true })
+  const initialization = await initializeDatabase(db)
+  if (initialization.backupTable) {
+    app.log(`Archived ${initialization.removeCount} duplicate packages in ${initialization.backupTable}`)
+  }
   app.log('synced')
 
   if (process.env.REPROCESS_ALL === 'True') {
