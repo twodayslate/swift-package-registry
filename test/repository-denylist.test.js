@@ -1,18 +1,16 @@
 jest.mock('../lib/process', () => ({ parsePackageRequest: jest.fn() }))
-jest.mock('../lib/find-or-create-package', () => jest.fn())
 jest.mock('async', () => ({
   queue: jest.fn(() => ({ push: jest.fn(), error: jest.fn(), drain: jest.fn(), length: jest.fn() }))
 }))
 
 const isRepositoryDenied = require('../lib/repository-denylist')
 const { parsePackageRequest } = require('../lib/process')
-const findOrCreatePackage = require('../lib/find-or-create-package')
 
 function setup (moduleName, route, method = 'get') {
   const router = {
     get: jest.fn(),
     post: jest.fn(),
-    db: { Package: { findOne: jest.fn() } }
+    db: { Package: { findOrCreate: jest.fn(), findOne: jest.fn() } }
   }
   require(moduleName)(router)
   const handler = router[method].mock.calls.find(([path]) => path === route)[1]
@@ -37,11 +35,11 @@ test.each(['airovo/rva-swift', 'other/rva', 'airovo/other', undefined, null])('a
 })
 
 test('package page rejects denied names before fetching or creating a record', async () => {
-  const { handler, req, res } = setup('../lib/package', '/:owner/:repo')
+  const { router, handler, req, res } = setup('../lib/package', '/:owner/:repo')
   await handler(req, res)
   expect(res.status).toHaveBeenCalledWith(404)
   expect(req.octokitWithPersonalAccessToken.repos.get).not.toHaveBeenCalled()
-  expect(findOrCreatePackage).not.toHaveBeenCalled()
+  expect(router.db.Package.findOrCreate).not.toHaveBeenCalled()
   expect(parsePackageRequest).not.toHaveBeenCalled()
 })
 
@@ -54,24 +52,24 @@ test.each(['../lib/package', '../lib/api/package'])('JSON route rejects denied n
 })
 
 test('manual submissions reject denied names before fetching or creating a record', async () => {
-  const { handler, req, res } = setup('../lib/add', '/add', 'post')
+  const { router, handler, req, res } = setup('../lib/add', '/add', 'post')
   await handler(req, res)
   expect(req.flash).toHaveBeenCalledWith('error', 'This repository is excluded from the registry')
   expect(res.redirect).toHaveBeenCalledWith('/add')
   expect(req.octokitWithPersonalAccessToken.repos.get).not.toHaveBeenCalled()
-  expect(findOrCreatePackage).not.toHaveBeenCalled()
+  expect(router.db.Package.findOrCreate).not.toHaveBeenCalled()
 })
 
 test.each([
   ['../lib/add', '/add', 'post'],
   ['../lib/package', '/:owner/:repo', 'get']
 ])('rejects canonical denied names returned by GitHub in %s', async (moduleName, route, method) => {
-  const { handler, req, res } = setup(moduleName, route, method)
+  const { router, handler, req, res } = setup(moduleName, route, method)
   req.params = { owner: 'old-owner', repo: 'old-name' }
   req.body.url = 'https://github.com/old-owner/old-name'
   req.octokitWithPersonalAccessToken.repos.get.mockResolvedValue({ data: { id: 1, full_name: 'airovo/rva' } })
   await handler(req, res)
-  expect(findOrCreatePackage).not.toHaveBeenCalled()
+  expect(router.db.Package.findOrCreate).not.toHaveBeenCalled()
   expect(parsePackageRequest).not.toHaveBeenCalled()
 })
 
@@ -84,7 +82,7 @@ test.each([
   req.params = { owner: 'airovo', repo: 'rva-swift' }
   req.body.url = 'https://github.com/airovo/rva-swift'
   req.octokitWithPersonalAccessToken.repos.get.mockResolvedValue({ data: info })
-  findOrCreatePackage.mockResolvedValue([{ info }, true])
+  router.db.Package.findOrCreate.mockResolvedValue([{ info }, true])
   await handler(req, res)
-  expect(findOrCreatePackage).toHaveBeenCalledWith(router.db.Package, info.id, info)
+  expect(router.db.Package.findOrCreate).toHaveBeenCalledTimes(1)
 })

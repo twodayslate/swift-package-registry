@@ -1,3 +1,6 @@
+// Other integration suites exercise startup contention on the same database.
+jest.setTimeout(30000)
+
 const nock = require('nock')
 // Requiring our app implementation
 const myProbotApp = require('..')
